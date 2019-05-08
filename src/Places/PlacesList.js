@@ -1,15 +1,33 @@
 import React, { Component } from 'react';
 
-import { Header, HeaderControl, PrimaryButton, Modal, PrimaryInput } from '../UI'
+import PlaceCreate from './PlaceCreate';
 
-import { List, Grid } from '@material-ui/core';
+import { Header, HeaderControl, PrimaryButton, Modal, ListItem } from '../UI'
 import { Add, PlaceTwoTone } from '@material-ui/icons';
+import { List } from '@material-ui/core';
+
+import PlacesService from './PlacesService';
 
 class Project extends Component {
   
   state = {
-    modal: false
+    modal: false,
+    places: []
   }
+
+  componentWillMount = () => {
+
+    PlacesService.getAll((res)=>{
+
+      const placesArray = [...this.state.places];
+      placesArray.push(...res);
+
+      this.setState({ places: placesArray });
+    });
+
+  }
+
+
 
   toggleModal = () => {
     this.setState({modal: !this.state.modal})
@@ -24,25 +42,19 @@ class Project extends Component {
           </HeaderControl>
         </Header>
 
-
-
-
-        {/* Modal */}
         <Modal open={this.state.modal} action={this.toggleModal}>
-          {/* CreatePlace */}
-          <Header icon={<Add />} title="Novo Local">
-            <HeaderControl>
-              <PrimaryInput icon={<PlaceTwoTone />} title="Procure o Local" ></PrimaryInput>
-            </HeaderControl>
-          </Header>
+          <PlaceCreate />
         </Modal>
 
-        {/* <ProjectHeader toggle={this.props.toggle}></ProjectHeader> */}
-        {/* <List style={{marginTop: 24}}>
-          <ProjectItem  key={1}
-                        title={"UTFPR"}
-                        date={"04/05/2019"}  />
-        </List> */}
+        <List style={{marginTop: 24}}>
+          {this.state.places.map((el) => (
+            <ListItem
+              key={el.key} 
+              title={el.data['place_name']} 
+              date={el.data['creation_time']} 
+            /> 
+          ))}
+        </List>
       </div>
     )
   }

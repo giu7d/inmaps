@@ -3,22 +3,23 @@ import { ListItem, ListItemText, ListItemSecondaryAction, IconButton } from '@ma
 import { MoreVert } from '@material-ui/icons';
 
 
+const listItem = (props) => {
 
+  const { title, date } = props;
 
-const projectItem = (props) => {
-
-  const { key, title, date } = props;
-  
   return (
     <ListItem>
-      <ListItemText primary={title} secondary={date} />
+      <ListItemText primary={title}
+                    secondary = {(date.seconds)}/>
+    
       <ListItemSecondaryAction>
         <IconButton aria-label="Delete">
             <MoreVert />
         </IconButton>
       </ListItemSecondaryAction>
+    
     </ListItem>
   )
 }
 
-export default projectItem;
+export default listItem;

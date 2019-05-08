@@ -15,7 +15,7 @@ class Drawer extends Component {
 
         <AppBar />
         <PlaceList />
-        <Place />
+        {/* <Place /> */}
       </MaterialDrawer>
     )
   }
