@@ -1,31 +1,16 @@
 // Header
-import header from './Header/Header';
-import headerSubtitle from './Header/HeaderSubtitle';
-import headerControl from './Header/HeaderControl'
+export { default as Header } from './Header/Header';
+export { default as HeaderSubtitle } from './Header/HeaderSubtitle';
+export { default as HeaderControl } from './Header/HeaderControl'
 // Button
-import primaryButton from './Button/PrimaryButton';
-import iconButton from './Button/IconButton';
+export { default as PrimaryButton } from './Button/PrimaryButton';
+export { default as IconButton } from './Button/IconButton';
 // Map
-import baseMap from './Map/BaseMap';
+export { default as BaseMap } from './Map/BaseMap';
+export { default as MapAutoComplete } from './Map/MapAutoComplete';
 //Modal
-import modal from './Modal/Modal';
+export { default as Modal} from './Modal/Modal';
 // Form
-import primaryInput from './Form/PrimaryInput';
+export { default as PrimaryInput} from './Form/PrimaryInput';
 // List
-import listItem from './List/ListItem';
-
-
-export const Header = header;
-export const HeaderSubtitle = headerSubtitle;
-export const HeaderControl = headerControl;
-
-export const PrimaryButton = primaryButton;
-export const IconButton = iconButton;
-
-export const BaseMap = baseMap;
-
-export const Modal = modal;
-
-export const PrimaryInput = primaryInput;
-
-export const ListItem = listItem;
+export { default as ListItem} from './List/ListItem';

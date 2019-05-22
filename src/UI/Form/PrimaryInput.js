@@ -6,7 +6,7 @@ const styles = {
     padding: '2px 4px',
     display: 'flex',
     alignItems: 'center',
-    width: 400,
+    width: `100%`,
   },
   input: {
     marginLeft: 8,
@@ -24,11 +24,18 @@ const styles = {
 
 const primaryInput = (props) => {
 
-  const { icon, title, value, change, classes } = props;
+  const { icon, title, classes, emmiter } = props;
+
+  console.log();
 
   return (
     <Paper className={classes.root} elevation={1}>
-      <InputBase className={classes.input} placeholder={title} value={value} onChange={change}/>
+      
+      <InputBase  {...emmiter({
+                    placeholder: title,
+                    className: classes.input
+                  })}/>
+
       <span className={classes.icon}>{icon}</span>  
     </Paper>
   )
