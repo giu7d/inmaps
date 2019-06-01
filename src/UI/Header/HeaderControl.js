@@ -9,11 +9,12 @@ const styles = ({
 
 const headerControl = (props) => {
 
-  const { children, justify, classes } = props;
+  const { children, justify, classes, spacing } = props;
 
   return (
     <Grid container 
           justify={justify || "center"}
+          spacing={spacing || 0}
           className={classes.space}>
       { children }
     </Grid>

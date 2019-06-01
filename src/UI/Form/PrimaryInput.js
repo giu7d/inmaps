@@ -1,5 +1,5 @@
 import React from 'react'
-import { withStyles, Paper, IconButton, InputBase } from '@material-ui/core';
+import { withStyles, Paper, InputBase } from '@material-ui/core';
 
 const styles = {
   root: {

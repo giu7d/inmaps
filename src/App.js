@@ -7,8 +7,8 @@ class App extends Component {
   render() {
     return (
       <main>
-        <Drawer></Drawer>
-        <Map></Map>
+        <Drawer />
+        <Map />
       </main>
     )
   }

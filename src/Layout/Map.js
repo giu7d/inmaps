@@ -1,23 +1,100 @@
+/* global google */
 import React, { Component } from 'react';
-import { Grid } from '@material-ui/core';
-import { BaseMap } from '../UI';
+import { connect } from 'react-redux';
+import { Actions } from '../Redux/Actions';
+import { withStyles } from '@material-ui/core';
 
 
-class Map extends Component {
-  render() {
-    return (
-      <Grid item 
-            xl={12}
-            className="FullHeight">
-
-      <BaseMap 
-        zoom={17}
-        center={{lat: -25.300763, lng: -54.114198}}
-        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDb4pC6745EetjePNEQLn1936Wg4yYRceQ&v=3.exp&libraries=geometry,drawing,places"
-      />
-      </Grid>
-    )
+const styles = {
+  map: {
+    position: 'absolute',
+    top: 0,
+    margin: 0,
+    width: `100vw`,
+    height: `100vh`
   }
 }
 
-export default Map;
+class Map extends Component {
+  
+
+  // Start Drawing tools
+  // _startDrawMgmt = () => {
+
+  //   const drawingManager = new google.maps.drawing.DrawingManager({
+  //     drawingMode: google.maps.drawing.OverlayType.MARKER,
+  //     drawingControl: true,
+  //     drawingControlOptions: {
+  //       position: google.maps.ControlPosition.TOP_CENTER,
+  //       drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
+  //     },
+  //     markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
+  //     circleOptions: {
+  //       fillColor: '#ffff00',
+  //       fillOpacity: 1,
+  //       strokeWeight: 5,
+  //       clickable: false,
+  //       editable: true,
+  //       zIndex: 1
+  //     }
+  //   });
+
+  //   this.setState({drawMgmt: drawingManager})
+
+  // }
+
+  _startMap = () => {
+    return new window.google.maps.Map(document.getElementById('map'), {
+      center: {
+        lat: this.props.lat,
+        lng: this.props.lng
+      },
+      zoom: this.props.zoom
+    });
+  }
+
+  _changeMapPosition = (map, lat, lng, zoom) => {
+    map.setCenter(new google.maps.LatLng(lat, lng));
+    map.setZoom(zoom);
+  }
+
+  componentDidMount() {
+    const { setup } = this.props;
+    setup(this._startMap());
+  }
+
+  componentDidUpdate() {
+    const { map, lat, lng, zoom } = this.props;
+    this._changeMapPosition(map, lat, lng, zoom);
+  }
+
+  render() {
+
+    const { classes } = this.props;
+
+    return (
+        <div  id="map"
+              className={classes.map}>
+        </div>
+    );
+  }
+  
+}
+
+const mapStateToProps = (state) => {
+  return {...state};
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setup: (map) => dispatch({
+      type: Actions.setMap,
+      map: map
+    })
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Map));

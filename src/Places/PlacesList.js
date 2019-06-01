@@ -8,6 +8,8 @@ import { List } from '@material-ui/core';
 
 import PlacesService from './PlacesService';
 
+import { Link } from 'react-router-dom';
+
 class Project extends Component {
   
   state = {
@@ -15,19 +17,19 @@ class Project extends Component {
     places: []
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
 
-    PlacesService.getAll((res)=>{
-
+    PlacesService.getAll(res => {
       const placesArray = [...this.state.places];
       placesArray.push(...res);
-
       this.setState({ places: placesArray });
     });
 
+    // PlacesService.getById('jbD1gYc7Z4iNYY1UqOMU', (data) => {
+    //   console.log(data);
+    // });
+
   }
-
-
 
   toggleModal = () => {
     this.setState({modal: !this.state.modal})
@@ -42,19 +44,25 @@ class Project extends Component {
           </HeaderControl>
         </Header>
 
+        <List style={{ marginTop: 24}}>
+          {this.state.places.map((el) => (
+              <ListItem
+                key={el.key}
+                title={
+                  <Link to={`/place/${el.key}`} 
+                        style={{ color:'inherit', textDecoration: 'none' }}>
+                    {el.data.title}
+                  </Link>
+                } 
+                date={el.data.creationTime} 
+              /> 
+          ))}
+        </List>
+
+        {/* MODAL */}
         <Modal open={this.state.modal} action={this.toggleModal}>
           <PlaceCreate />
         </Modal>
-
-        <List style={{marginTop: 24}}>
-          {this.state.places.map((el) => (
-            <ListItem
-              key={el.key} 
-              title={el.data['place_name']} 
-              date={el.data['creation_time']} 
-            /> 
-          ))}
-        </List>
       </div>
     )
   }

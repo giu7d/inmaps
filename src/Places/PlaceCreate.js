@@ -1,52 +1,84 @@
 import React, { Component } from 'react';
-import { AddTwoTone } from '@material-ui/icons';
-import { Header, HeaderControl, MapAutoComplete } from '../UI';
-import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
+import { Add, Done } from '@material-ui/icons';
+import { Header, HeaderControl, AutoCompleteInput, SecundaryButton } from '../UI';
+import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
+import { withRouter } from 'react-router-dom';
+import PlacesService from './PlacesService';
 
 class PlaceCreate extends Component {
   
   state = {
+    title:'',
     description: '',
     placeId: '',
     address: '',
-    latLng: {}
+    center: {},
+    creationTime: new Date()
   }
-  
-  handleChange = (desc) => {
-    this.setState({ description: desc });
+
+  _inputChangeHangle = (search) => {
+    this.setState({ title: search });
   };
 
-  handleSelect = (desc) => {
-    geocodeByAddress(desc)
-      .then(res => {  
-        const { place_id, formatted_address } = res[0];
-
-        console.log(place_id);
-        console.log(formatted_address);
+  _inputSelectHandle = (search) => {
+    geocodeByAddress(search)
+      .then(res => {
 
         this.setState({
-          placeId: place_id, 
-          address: formatted_address
+          title: search,
+          placeId: res[0].place_id,
+          address: res[0].formatted_address,
         });
 
         return getLatLng(res[0]);
       })
-      .then(latLng => this.setState({ latLng: latLng }))
+      .then((coord) => this.setState({ center: {latitude: coord.lat, longitude: coord.lng} }))
+      .then(() => console.log(this.state))
       .catch(error => console.error('Error', error));
-  };
+  }
 
-   render() {
+  // TO DO:
+  _createHandler = () => {
+    PlacesService.create(this.state, (res) => this._navigateToPlace(res));
+  }
+
+  _navigateToPlace = (id) => {
+    this.props.history.push(`/place/${id}`);
+  }
+
+  _closeModalHandler = () => {
+    console.log('close')
+  }
+
+
+  render() {
     return (
-      <Header icon={<AddTwoTone />} title="Novo Local">
-        <HeaderControl>
-          <MapAutoComplete  value={this.state.description}
-                            select={this.handleSelect}
-                            change={this.handleChange} />
-        </HeaderControl>
+      <Header icon={<Add />} title="Novo Local">
+        <PlacesAutocomplete value={this.state.title}
+                            onChange={this._inputChangeHangle}
+                            onSelect={this._inputSelectHandle}>
+            {el => <AutoCompleteInput {...el}/>}
+        </PlacesAutocomplete>
+        <div style={{margin: '0 12px'}}>
+          <HeaderControl  justify="flex-end"
+                          spacing={8}>
+          
+            {/* <CleanButton  title="Cancelar" 
+                          gridSize={4}
+                          action={this._closeModalHandler}/> */}
+            
+            <SecundaryButton  icon={<Done />} 
+                              title="Próximo" 
+                              gridSize={4} 
+                              action={this._createHandler} />
+
+          </HeaderControl>        
+        </div>
       </Header>
     )
   }
 
 }
 
-export default PlaceCreate
+
+export default withRouter(PlaceCreate);
