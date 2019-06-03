@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Header, HeaderControl, HeaderSubtitle, IconButton } from '../UI';
-import { PlaceTwoTone, Timeline, AttachFile, AddLocation, MoreVert } from '@material-ui/icons';
-import PlacesService from './PlacesService';
 import { connect } from 'react-redux';
-import { Actions } from '../Redux/Actions';
+import { Actions } from '../../store/Actions';
+import { PlaceTwoTone, Timeline, AttachFile, AddLocation, MoreVert } from '@material-ui/icons';
+import { Header, HeaderControl, HeaderSubtitle, IconButton } from '../../presentational';
 
+import PlaceService from './PlaceService';
 
 class Place extends Component {
 
@@ -44,7 +44,7 @@ class Place extends Component {
 
   componentDidMount() {
 
-    PlacesService.getById(this.state.id, res => {
+    PlaceService.getById(this.state.id, res => {
       
       const { data } = res;
 

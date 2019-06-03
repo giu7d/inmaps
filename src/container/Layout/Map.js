@@ -1,7 +1,9 @@
 /* global google */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Actions } from '../Redux/Actions';
+import { Actions } from '../../store/Actions';
+
 import { withStyles } from '@material-ui/core';
 
 

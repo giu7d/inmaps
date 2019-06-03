@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Drawer from './Layout/Drawer';
-import Map from './Layout/Map';
+import Drawer from './container/Layout/Drawer';
+import Map from './container/Layout/Map';
 
 class App extends Component {
   

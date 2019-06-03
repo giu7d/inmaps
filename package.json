@@ -39,6 +39,7 @@
     ]
   },
   "devDependencies": {
+    "eslint-plugin-react-hooks": "^1.6.0",
     "redux-devtools": "^3.5.0"
   }
 }

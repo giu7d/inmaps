@@ -1,6 +1,6 @@
-import { fireStore } from '../Firebase/FirebaseConnect';
+import { fireStore } from '../../connect/FirebaseConnect';
 
-export default class PlacesService {
+export default class PlaceService {
     
     static getAll = (callback) => {
       
@@ -41,13 +41,11 @@ export default class PlacesService {
             .catch(err => callback(err));
     }
     
-    static delete = (id, callback) => {
+    static delete = (id) => {
 
         fireStore.collection('places')
             .doc(id)
-            .delete()
-            .then(() => callback('success'))
-            .catch(err => callback(err));
+            .delete();
     }
 
     static update = (id, data, callback) => {

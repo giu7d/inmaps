@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Add, Done } from '@material-ui/icons';
-import { Header, HeaderControl, AutoCompleteInput, SecundaryButton } from '../UI';
-import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import { withRouter } from 'react-router-dom';
-import PlacesService from './PlacesService';
+import { Add, Done } from '@material-ui/icons';
+import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
+import { Header, HeaderControl, AutoCompleteInput, SecundaryButton } from '../../presentational';
+import PlaceService from './PlaceService';
 
 class PlaceCreate extends Component {
   
@@ -39,7 +39,7 @@ class PlaceCreate extends Component {
 
   // TO DO:
   _createHandler = () => {
-    PlacesService.create(this.state, (res) => this._navigateToPlace(res));
+    PlaceService.create(this.state, (res) => this._navigateToPlace(res));
   }
 
   _navigateToPlace = (id) => {

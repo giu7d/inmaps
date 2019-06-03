@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { Drawer as MaterialDrawer, withStyles } from '@material-ui/core';
 import { Route, withRouter } from 'react-router-dom';
+import { Drawer as MaterialDrawer, withStyles } from '@material-ui/core';
 
-import AppBar from '../UI/AppBar';
-import PlaceList from '../Places/PlacesList';
-import Place from '../Places/Place';
+import { AppBar } from '../../presentational';
+import PlaceList from '../Place/PlaceList';
+import Place from '../Place/Place';
 
 
 const styles = {
