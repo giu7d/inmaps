@@ -7,6 +7,7 @@ import { Header, HeaderControl, PrimaryButton, Modal } from '../../presentationa
 import PlaceService from './PlaceService';
 import PlaceCreate from './PlaceCreate';
 import PlaceItem from './PlaceItem';
+import Skeleton from 'react-loading-skeleton';
 
 
 class PlaceList extends Component {
@@ -42,6 +43,27 @@ class PlaceList extends Component {
   }
 
   render() {
+
+    const skeleton = () => {
+
+      const size = Math.floor(Math.random() * 10);
+      const array = [];
+
+      
+      for(let i=0; i<size; i++) {
+        
+        array.push(
+          <div  key={i}
+                style={{ margin: 24, width: 300 }}>
+            <Skeleton count={2} />
+          </div>
+        );
+
+      }
+
+      return array;
+    }
+
     return (
       <div>
         <Header icon={<PlaceTwoTone />} title="Lugares">
@@ -51,13 +73,13 @@ class PlaceList extends Component {
         </Header>
 
         <List style={{ marginTop: 24}}>
-          {this.state.places.map((el) => (
+          {(this.state.places.length !== 0) ? this.state.places.map((el) => (
               <PlaceItem  key={el.key}
                           id={el.key}
                           title={el.data.title}
                           date={el.data.creationTime}
                           onDelete={this._deletePlace} />
-          ))}
+          )) : skeleton() }
         </List>
 
         {/* MODAL */}

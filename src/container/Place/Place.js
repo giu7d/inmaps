@@ -4,6 +4,8 @@ import { Actions } from '../../store/Actions';
 import { PlaceTwoTone, Timeline, AttachFile, AddLocation, MoreVert } from '@material-ui/icons';
 import { Header, HeaderControl, HeaderSubtitle, IconButton } from '../../presentational';
 
+import Skeleton from 'react-loading-skeleton';
+
 import PlaceService from './PlaceService';
 
 class Place extends Component {
@@ -64,9 +66,9 @@ class Place extends Component {
   render() {
     return (
       <div>
-        <Header icon={<PlaceTwoTone />} title={this.state.title}>
+        <Header icon={<PlaceTwoTone />} title={this.state.title || <Skeleton />}>
           <HeaderSubtitle>
-            { this.state.description || 'Sem descrição.' }
+            { this.state.description || <Skeleton count={4} /> }
           </HeaderSubtitle>
           <HeaderControl>
             <IconButton icon={<Timeline />} title="Criar Contorno" />

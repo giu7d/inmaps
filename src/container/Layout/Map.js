@@ -46,7 +46,7 @@ class Map extends Component {
   // }
 
   _startMap = () => {
-    return new window.google.maps.Map(document.getElementById('map'), {
+    return new google.maps.Map(document.getElementById('map'), {
       center: {
         lat: this.props.lat,
         lng: this.props.lng

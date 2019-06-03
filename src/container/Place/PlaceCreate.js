@@ -26,6 +26,7 @@ class PlaceCreate extends Component {
 
         this.setState({
           title: search,
+          description: search,
           placeId: res[0].place_id,
           address: res[0].formatted_address,
         });
