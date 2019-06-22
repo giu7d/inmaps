@@ -1,7 +1,7 @@
 /* global google */
 
 import React, { Component } from 'react'
-import { Timeline, AttachFile, AddLocation, MoreVert, Close } from '@material-ui/icons';
+import { Timeline, AttachFile, AddLocation, MoreVert } from '@material-ui/icons';
 import { HeaderControl, IconButton } from '../../presentational';
 import { connect } from 'react-redux';
 import { Actions } from '../../store/Actions';
@@ -40,7 +40,7 @@ class PlaceControls extends Component {
         .map((el, i) =>  polygon.getPath()
                                 .getAt(i)
                                 .toUrlValue(6)
-                                .match(/(\-?\d+(\.\d+)?)/g));
+                                .match(/(-?\d+(\.\d+)?)/g));
 
       // => Convert nested array to string for saving in Firebase. 
       const polygonPathString = JSON.stringify(polygonPath);
