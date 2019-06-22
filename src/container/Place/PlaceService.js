@@ -1,5 +1,7 @@
 import { fireStore } from '../../connect/FirebaseConnect';
 
+
+
 export default class PlaceService {
     
     static getAll = (callback) => {
@@ -48,12 +50,12 @@ export default class PlaceService {
             .delete();
     }
 
-    static update = (id, data, callback) => {
+    static update = (id, data) => {
 
         fireStore.collection('places')
             .doc(id)
-            .set(data)
-            .then(doc => callback({key: doc.id, data: doc.data()}))
-            .catch(err => callback(err));
+            .set(data);
     }
+
+    
 }

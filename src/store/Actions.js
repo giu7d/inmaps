@@ -1,4 +1,7 @@
 export const Actions = {
-  setMap: 'SET_MAP',
-  setMapLocation: 'SET_MAP_LOCATION'
+  setMapAPI: 'SET_MAP',
+  setMapLocation: 'SET_MAP_LOCATION',
+  setMapDrawAPI: 'SET_MAP_DRAW',
+  setPlace: 'SET_PLACE',
+  setPlaceBorder: 'SET_PLACE_BORDER',
 }

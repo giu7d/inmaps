@@ -8,6 +8,7 @@ import PlaceService from './PlaceService';
 class PlaceCreate extends Component {
   
   state = {
+    search: '',
     title:'',
     description: '',
     placeId: '',
@@ -16,16 +17,17 @@ class PlaceCreate extends Component {
     creationTime: new Date()
   }
 
-  _inputChangeHangle = (search) => {
-    this.setState({ title: search });
+  
+  _inputChangeHandler = (search) => {
+    this.setState({ search: search });
   };
 
-  _inputSelectHandle = (search) => {
+  _inputSelectHandler = (search) => {
+    
     geocodeByAddress(search)
       .then(res => {
-
         this.setState({
-          title: search,
+          title: search.match(/^(.[^\s]+)\s(.[^\s]+)/g)[0],
           description: search,
           placeId: res[0].place_id,
           address: res[0].formatted_address,
@@ -38,7 +40,6 @@ class PlaceCreate extends Component {
       .catch(error => console.error('Error', error));
   }
 
-  // TO DO:
   _createHandler = () => {
     PlaceService.create(this.state, (res) => this._navigateToPlace(res));
   }
@@ -55,9 +56,9 @@ class PlaceCreate extends Component {
   render() {
     return (
       <Header icon={<Add />} title="Novo Local">
-        <PlacesAutocomplete value={this.state.title}
-                            onChange={this._inputChangeHangle}
-                            onSelect={this._inputSelectHandle}>
+        <PlacesAutocomplete value={this.state.search}
+                            onChange={this._inputChangeHandler}
+                            onSelect={this._inputSelectHandler}>
             {el => <AutoCompleteInput {...el}/>}
         </PlacesAutocomplete>
         <div style={{margin: '0 12px'}}>

@@ -10,14 +10,16 @@ const styles = ({
 const iconButton = (props) => {
 
   const {icon, title, action, classes} = props;
-
+  
   return (
     <Grid item 
           xs={2}
           className={classes.space}>
-      <Tooltip title={title} aria-label={title}>
-        <IconButton onClick={action}> {icon} </IconButton>
-      </Tooltip>
+      
+    <Tooltip title={title} aria-label={title}>
+      <IconButton onClick={action}> {icon} </IconButton>
+    </Tooltip>
+
     </Grid>
   )
 }

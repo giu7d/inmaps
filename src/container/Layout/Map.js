@@ -17,35 +17,15 @@ const styles = {
   }
 }
 
+
 class Map extends Component {
   
-
-  // Start Drawing tools
-  // _startDrawMgmt = () => {
-
-  //   const drawingManager = new google.maps.drawing.DrawingManager({
-  //     drawingMode: google.maps.drawing.OverlayType.MARKER,
-  //     drawingControl: true,
-  //     drawingControlOptions: {
-  //       position: google.maps.ControlPosition.TOP_CENTER,
-  //       drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
-  //     },
-  //     markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
-  //     circleOptions: {
-  //       fillColor: '#ffff00',
-  //       fillOpacity: 1,
-  //       strokeWeight: 5,
-  //       clickable: false,
-  //       editable: true,
-  //       zIndex: 1
-  //     }
-  //   });
-
-  //   this.setState({drawMgmt: drawingManager})
-
-  // }
-
-  _startMap = () => {
+  // 
+  // Starting API's
+  // Google Maps and Draw Library Manager
+  // 
+  
+  _startMapAPI = () => {
     return new google.maps.Map(document.getElementById('map'), {
       center: {
         lat: this.props.lat,
@@ -55,25 +35,48 @@ class Map extends Component {
     });
   }
 
+  _startDrawAPI = () => {
+    return new google.maps.drawing.DrawingManager({
+      // drawingMode: google.maps.drawing.OverlayType.POLYGON,
+      drawingControl: false
+    });
+  }
+
+  // 
+  // Manipulating Maps
+  // 
+  
   _changeMapPosition = (map, lat, lng, zoom) => {
-    map.setCenter(new google.maps.LatLng(lat, lng));
+    map.setCenter({
+      lat: lat,
+      lng: lng
+    });
     map.setZoom(zoom);
   }
 
+  // 
+  // Component Functions
+  // 
+  
   componentDidMount() {
-    const { setup } = this.props;
-    setup(this._startMap());
-  }
+    const { setMapAPI, setDrawAPI } = this.props;
+    const mapAPI = this._startMapAPI();
+    const drawAPI = this._startDrawAPI();
 
+    drawAPI.setMap(mapAPI);
+
+    setMapAPI(mapAPI);
+    setDrawAPI(drawAPI);
+  
+  }
+  
   componentDidUpdate() {
-    const { map, lat, lng, zoom } = this.props;
-    this._changeMapPosition(map, lat, lng, zoom);
+    const { mapAPI, lat, lng, zoom } = this.props.map;
+    this._changeMapPosition(mapAPI, lat, lng, zoom);
   }
 
   render() {
-
     const { classes } = this.props;
-
     return (
         <div  id="map"
               className={classes.map}>
@@ -83,15 +86,24 @@ class Map extends Component {
   
 }
 
+
+// 
+// REDUX
+// 
+
 const mapStateToProps = (state) => {
   return {...state};
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setup: (map) => dispatch({
-      type: Actions.setMap,
-      map: map
+    setMapAPI: (mapAPI) => dispatch({
+      type: Actions.setMapAPI,
+      mapAPI: mapAPI
+    }),
+    setDrawAPI: (drawAPI) => dispatch({
+      type: Actions.setMapDrawAPI,
+      drawAPI: drawAPI
     })
   }
 }
