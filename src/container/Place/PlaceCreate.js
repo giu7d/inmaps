@@ -9,12 +9,16 @@ class PlaceCreate extends Component {
   
   state = {
     search: '',
-    title:'',
+    id: '',
+    title: '',
     description: '',
-    placeId: '',
     address: '',
+    placeId: '',
     center: {},
-    creationTime: new Date()
+    border: [],
+    blueprint: [],
+    tag: [],
+    creationTime: new Date(),
   }
 
   

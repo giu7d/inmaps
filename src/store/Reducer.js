@@ -1,34 +1,28 @@
 import { Actions } from './Actions';
 
-const InitialState = {
+// 
+// Reducer
+// 
+
+const InitialState = { 
   map: {
     mapAPI: null,
     drawAPI: null,
     lat: -14.235004,
     lng: -51.925279,
     zoom: 3,
-  },
-  place: {
-    id: '',
-    title: '',
-    description: '',
-    address: '',
-    placeId: '',
-    center: {},
-    border: [],
-    blueprint: [],
-    tag: [],
-    creationTime: null
   }
-
 }
 
 export const reducer = (state=InitialState, act) => {
-  
-  switch (act.type) {
+
+  const { type } = act;
+  const { setMapAPI, setMapLocation, setMapDrawAPI } = Actions;
+
+  switch (type) {
 
     // Map
-    case Actions.setMapAPI:
+    case setMapAPI:
       return {
         ...state,
         map: { 
@@ -36,8 +30,7 @@ export const reducer = (state=InitialState, act) => {
           mapAPI: act.mapAPI
         }
       }
-    
-    case Actions.setMapLocation:
+    case setMapLocation:
       return {
         ...state,
         map: {
@@ -47,8 +40,7 @@ export const reducer = (state=InitialState, act) => {
           zoom: act.zoom
         }
       }
-      
-    case Actions.setMapDrawAPI:
+    case setMapDrawAPI:
       return {
         ...state,
         map: {
@@ -56,28 +48,7 @@ export const reducer = (state=InitialState, act) => {
           drawAPI: act.drawAPI
         }
       }
-
-    // Place
-    case Actions.setPlace:
-      return {
-        ...state,
-        place: { 
-          // Atenção Aqui, pode dar ruim
-          ...state.place, 
-          ...act.place 
-        }
-      }
-
-    case Actions.setPlaceBorder:
-      return {
-        ...state,
-        place: { 
-          ...state.place,
-          border: [...act.border] 
-        }
-      }
-
-
+      
     default:
       return state;
   }

@@ -1,31 +1,38 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from '../../store/Actions';
-import { PlaceTwoTone } from '@material-ui/icons';
-import { Header, HeaderSubtitle } from '../../presentational';
+import { PlaceTwoTone, AddLocation } from '@material-ui/icons';
+import { Header, HeaderSubtitle, HeaderControl, IconButton } from '../../presentational';
 import Skeleton from 'react-loading-skeleton';
 import PlaceService from './PlaceService';
-import PlaceControls from './PlaceControls';
+import PlaceBorder from './PlaceBorder';
+import PlaceOverlay from './PlaceOverlay';
 
 
 class Place extends Component {
 
   state = {
-    id: '',
-    oldPlace: {}
+    urlId: '',
+    place: {
+      id: '',
+      title: '',
+      description: '',
+      address: '',
+      placeId: '',
+      center: {},
+      border: [],
+      blueprint: [],
+      tag: [],
+      creationTime: null,
+    }
   }
-
 
   // 
   // URL
   // 
   _getURLParams = () => {
-
     const params = this.props.match.params;
-
-    this.setState({
-      id: params.id
-    });
+    this.setState({ urlId: params.id });
   }
 
 
@@ -33,74 +40,80 @@ class Place extends Component {
   // Place
   // 
   _getPlaceById = () => {
-    
-    PlaceService.getById(this.state.id, res => {
 
-      try {
-        
-        const { data } = res;
-        
+    PlaceService.getById(this.state.urlId, (res) => {        
+      try{
+
+        const { key, data } = res;
+
         this.props.setMapLocation(data.center);
-        this.props.setPlace({
-          id: this.state.id,
-          ...data,
+        
+        this.setState({
+          place: { 
+            ...data,
+            id: key
+          } 
         });
-
+      
       } catch (e) {
         console.log(e);
-      }  
+      }
+
     });
   }
 
-  _updatePlace = () => {
+  _updatePlace = (place) => {
     
-    const { oldPlace } = this.state;
-    const { place } = this.props;
-    
-    try {
-      if(oldPlace !== place) {
-        if (!(place.id === "" || place.id === '' || place.id === null || place.id === undefined)) {
-          console.log('Update');
-          PlaceService.update(place.id, place);
-          this.setState({oldPlace: place})
-        }
-      }
+    this.setState({
+      place: {...place}  
+    })
+
+    try {  
+      PlaceService.update(this.state.place.id, place);
     } catch (e) {
       console.log(e);
     }
   }
 
+  _setPlaceBorder = (border) => {
+
+    const { place } = this.state;
+
+    place.border = [...border];
+
+    this.setState({
+      place: {...place}
+    });
+  }
 
   // 
   // React Components
   // 
-  // => Get URL Id before component mount
   componentWillMount() {
     this._getURLParams();
   }
 
-  // => Get Place from Firebase after component mount
   componentDidMount() {
     this._getPlaceById();
   }
-  
-  // => Update Place from Firebase when component update
-  componentDidUpdate() {
-    this._updatePlace();
-  }
 
-  
+
   render() {
-
-    const { place } = this.props
-
     return (
       <div>
-        <Header icon={<PlaceTwoTone />} title={place.title || <Skeleton />}>
+        <Header icon={<PlaceTwoTone />} title={this.state.place.title || <Skeleton />}>
           <HeaderSubtitle>
-            { place.description || <Skeleton count={4} /> }
+            { this.state.place.description || <Skeleton count={4} /> }
           </HeaderSubtitle>
-          <PlaceControls />
+          {(this.state.place.id !== '') && (
+            <HeaderControl>
+              <PlaceBorder  place={this.state.place} 
+                            update={this._updatePlace}
+                            setBorder = {this._setPlaceBorder}/>
+              <PlaceOverlay place={this.state.place} />
+
+              <IconButton icon={<AddLocation />} title="Marcar Salas" />
+            </HeaderControl>)}
         </Header>
       </div>
     )
@@ -122,10 +135,6 @@ const mapDispatchToProps = (dispatch) => {
       lat: position.latitude,
       lng: position.longitude,
       zoom: 18
-    }),
-    setPlace: (place) => dispatch({
-      type: Actions.setPlace,
-      place: place
     })
   }
 }

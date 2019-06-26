@@ -18,7 +18,11 @@ const styles = {
 
 class Drawer extends Component {
   
-  _navHomeHandler = () => {
+  // 
+  // Router
+  // 
+  // => handles AppBar Logo/Button Action;
+  _setURLToHome = () => {
     this.props.history.push('/');
   }
 
@@ -31,7 +35,9 @@ class Drawer extends Component {
                       variant="permanent">
 
           <div className={classes.drawer}>
-            <AppBar action={ this._navHomeHandler }/>
+
+            <AppBar action={ this._setURLToHome }/>
+            
             <Route  path="/" 
                     exact 
                     component={PlaceList} />
@@ -42,5 +48,6 @@ class Drawer extends Component {
     )
   }
 }
+
 
 export default withStyles(styles)(withRouter(Drawer));

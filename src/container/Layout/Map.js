@@ -21,11 +21,24 @@ const styles = {
 class Map extends Component {
   
   // 
-  // Starting API's
-  // Google Maps and Draw Library Manager
+  // API
+  // Google Maps, Draw Library, Overlays...
   // 
-  
-  _startMapAPI = () => {
+  _initAPIs = () => {
+    // => Init. API's
+    const mapAPI = this._startMapAPI();
+    const drawAPI = this._startDrawAPI();
+
+    // => Set Managers to API's
+    drawAPI.setMap(mapAPI);
+
+    // => Store API's state
+    const { setMapAPI, setDrawAPI } = this.props;
+    setMapAPI(mapAPI);
+    setDrawAPI(drawAPI);
+  }
+
+ _startMapAPI = () => {
     return new google.maps.Map(document.getElementById('map'), {
       center: {
         lat: this.props.lat,
@@ -37,42 +50,37 @@ class Map extends Component {
 
   _startDrawAPI = () => {
     return new google.maps.drawing.DrawingManager({
-      // drawingMode: google.maps.drawing.OverlayType.POLYGON,
       drawingControl: false
     });
   }
 
   // 
-  // Manipulating Maps
+  // Maps Options
   // 
-  
-  _changeMapPosition = (map, lat, lng, zoom) => {
-    map.setCenter({
+  _changeMapPosition = () => {
+
+    const { mapAPI, lat, lng, zoom } = this.props.map;
+
+    mapAPI.setCenter({
       lat: lat,
       lng: lng
     });
-    map.setZoom(zoom);
+
+    if (zoom <= 18) {
+      mapAPI.setZoom(zoom);
+    } 
   }
-
-  // 
-  // Component Functions
-  // 
   
+  
+  // 
+  // React Components
+  // 
   componentDidMount() {
-    const { setMapAPI, setDrawAPI } = this.props;
-    const mapAPI = this._startMapAPI();
-    const drawAPI = this._startDrawAPI();
-
-    drawAPI.setMap(mapAPI);
-
-    setMapAPI(mapAPI);
-    setDrawAPI(drawAPI);
-  
+    this._initAPIs()
   }
   
   componentDidUpdate() {
-    const { mapAPI, lat, lng, zoom } = this.props.map;
-    this._changeMapPosition(mapAPI, lat, lng, zoom);
+    this._changeMapPosition();
   }
 
   render() {
@@ -90,7 +98,6 @@ class Map extends Component {
 // 
 // REDUX
 // 
-
 const mapStateToProps = (state) => {
   return {...state};
 }
