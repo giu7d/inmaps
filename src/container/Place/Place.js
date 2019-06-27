@@ -7,6 +7,7 @@ import Skeleton from 'react-loading-skeleton';
 import PlaceService from './PlaceService';
 import PlaceBorder from './PlaceBorder';
 import PlaceOverlay from './PlaceOverlay';
+import PlaceUpload from './PlaceUpload';
 
 
 class Place extends Component {
@@ -24,7 +25,8 @@ class Place extends Component {
       blueprint: [],
       tag: [],
       creationTime: null,
-    }
+    },
+    isUploading: false,
   }
 
   // 
@@ -86,6 +88,13 @@ class Place extends Component {
     });
   }
 
+  // Upload
+  toogleUpload = () => {
+    this.setState({
+      isUploading: !this.state.isUploading
+    })
+  }
+
   // 
   // React Components
   // 
@@ -99,23 +108,25 @@ class Place extends Component {
 
 
   render() {
-    return (
-      <div>
-        <Header icon={<PlaceTwoTone />} title={this.state.place.title || <Skeleton />}>
-          <HeaderSubtitle>
-            { this.state.place.description || <Skeleton count={4} /> }
-          </HeaderSubtitle>
-          {(this.state.place.id !== '') && (
-            <HeaderControl>
-              <PlaceBorder  place={this.state.place} 
-                            update={this._updatePlace}
-                            setBorder = {this._setPlaceBorder}/>
-              <PlaceOverlay place={this.state.place} />
+    return (this.state.place.id !== '') && (
+        <div>
+          <Header icon={<PlaceTwoTone />} title={this.state.place.title || <Skeleton />}>
+            <HeaderSubtitle>
+            </HeaderSubtitle>
+              <HeaderControl>
+                <PlaceBorder  place={this.state.place} 
+                              update={this._updatePlace}
+                              setBorder = {this._setPlaceBorder} />
+                <PlaceOverlay place={this.state.place}
+                              toogleUpload={this.toogleUpload}
+                              isDisabled={this.state.isUploading}  />
 
-              <IconButton icon={<AddLocation />} title="Marcar Salas" />
-            </HeaderControl>)}
-        </Header>
-      </div>
+                <IconButton icon={<AddLocation />} title="Marcar Salas" />
+              </HeaderControl>
+          </Header>
+          {(this.state.isUploading) && <PlaceUpload place={this.state.place} 
+                                                    toogleUpload={this.toogleUpload} />}
+        </div>
     )
   }
 }

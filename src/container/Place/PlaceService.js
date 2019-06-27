@@ -1,5 +1,6 @@
-import { fireStore } from '../../connect/FirebaseConnect';
+import { fireStore, fireStorage } from '../../connect/FirebaseConnect';
 import Utils from '../../utils/Utils';
+import Hash from 'jshashes';
 
 export default class PlaceService {
     
@@ -50,14 +51,55 @@ export default class PlaceService {
 	static update = (id, data) => {
 
 		const border = (typeof(data.border[0]) === 'object') ? data.border.map(polygon => Utils.mapPolygonToString(polygon)) : data.border;
-		console.log(border);
 
 		fireStore.collection('places')
 			.doc(id)
 			.set({
 					...data,
 					border: border,
-			});
+				});
 	}
  
+
+	static upload = (place, file, progress, load, error, complete) => {
+
+		const hashFileName = new Hash.MD5().hex(file.name + (Math.random() * 1000 * file.size));
+
+		const storageRef = fireStorage.ref();
+		
+		const metadata = {
+			contentType: file.type,
+		}
+
+		const uploadTask = storageRef.child('blueprints/' + hashFileName).put(file, metadata);
+
+		uploadTask.on('state_changed',
+			(snapshot) => progress((snapshot.state === 'running'), snapshot.bytesTransferred, snapshot.totalBytes),
+			(e) => error('Oh NO!!'),
+			() => {
+				
+				const { id, blueprint } = place;
+
+				this.update(id, {
+					...place,
+					blueprint: [
+						...blueprint, 
+						{
+							image: hashFileName,
+							border: []
+						}
+					]	
+				});
+				load();
+				complete();
+			});
+				
+		
+		// Create a reference to 'mountains.jpg'
+		// var mountainsRef = storageRef.child('mountains.jpg');
+
+		// Create a reference to 'images/mountains.jpg'
+		// var mountainImagesRef = storageRef.child('images/mountains.jpg');
+
+	}
 }

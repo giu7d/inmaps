@@ -84,7 +84,6 @@ class PlaceBorder extends Component{
       <IconButton icon={<Timeline />} title="Criar Contorno" action={this.create} />
     )
   }
-
 }
 
 

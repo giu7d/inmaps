@@ -1,7 +1,7 @@
-/* global google */
+// /* global google */
 
 import React, { Component } from 'react';
-import Utils from '../../utils/Utils';
+// import Utils from '../../utils/Utils';
 import { connect } from 'react-redux';
 
 import { AttachFile } from '@material-ui/icons';
@@ -87,9 +87,13 @@ class PlaceOverlay extends Component{
     // this.clear();
   }
 
+  
   render() {
     return (
-      <IconButton icon={<AttachFile />} title="Adicionar Planta" />
+      <IconButton icon={<AttachFile />} 
+                  title="Adicionar Planta" 
+                  action={ this.props.toogleUpload } 
+                  disabled={this.props.isDisabled}/>
     )
   }
 

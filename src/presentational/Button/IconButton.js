@@ -9,7 +9,7 @@ const styles = ({
 
 const iconButton = (props) => {
 
-  const {icon, title, action, classes} = props;
+  const {icon, title, action, classes, disabled} = props;
   
   return (
     <Grid item 
@@ -17,7 +17,7 @@ const iconButton = (props) => {
           className={classes.space}>
       
     <Tooltip title={title} aria-label={title}>
-      <IconButton onClick={action}> {icon} </IconButton>
+      <IconButton onClick={action} disabled={disabled}> {icon} </IconButton>
     </Tooltip>
 
     </Grid>
