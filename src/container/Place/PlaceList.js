@@ -8,6 +8,8 @@ import PlaceService from './PlaceService';
 import PlaceCreate from './PlaceCreate';
 import PlaceItem from './PlaceItem';
 import Skeleton from 'react-loading-skeleton';
+import { connect } from 'react-redux';
+import { Actions } from '../../store/Actions';
 
 
 class PlaceList extends Component {
@@ -41,6 +43,11 @@ class PlaceList extends Component {
   
   componentDidMount = () => {
     this._setPlace();
+    this.props.setMapLocation({
+      latitude: -14.235004,
+      longitude: -51.925279,
+      zoom: 3
+    })
   }
 
   render() {
@@ -108,4 +115,27 @@ class PlaceList extends Component {
   }
 }
 
-export default PlaceList;
+// 
+// Redux
+// 
+const mapStateToProps = (state) => {
+  return {
+    ...state
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setMapLocation: (position) => dispatch({
+      type: Actions.setMapLocation,
+      lat: position.latitude,
+      lng: position.longitude,
+      zoom: position.zoom
+    })
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PlaceList);

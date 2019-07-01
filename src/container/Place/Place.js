@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from '../../store/Actions';
-import { PlaceTwoTone, AddLocation } from '@material-ui/icons';
-import { Header, HeaderSubtitle, HeaderControl, IconButton } from '../../presentational';
+import { PlaceTwoTone } from '@material-ui/icons';
+import { Header, HeaderSubtitle, HeaderControl } from '../../presentational';
 import Skeleton from 'react-loading-skeleton';
 import PlaceService from './PlaceService';
 import Layer from '../Layer/Layer';
@@ -89,6 +89,19 @@ class Place extends Component {
     });
   }
 
+  _setPlaceBlueprint = (blueprint) => {
+
+    const { place } = this.state;
+
+    place.blueprint.push(blueprint);
+
+    this.setState({
+      place: {...place}
+    });
+
+    this.forceUpdate();
+  }
+
   // 
   // React Components
   // 
@@ -115,15 +128,20 @@ class Place extends Component {
               </HeaderControl>
           </Header>
           <Layer  place={this.state.place}
-                  overlays={this.state.overlay} />
+                  overlays={this.state.overlay}
+                  setBlueprint={this._setPlaceBlueprint} />
 
           {/* Start Map Integration Components */}
           {/* and load of the map objects for each type */}
+          
           <Border place={this.state.place}
                   update={this._updatePlace}
                   setBorder={this._setPlaceBorder} />
-          <Blueprint  place={this.state.place}
-                      update={this._updatePlace}/>
+          
+          {(this.state.place.blueprint.length !== 0) && (
+            <Blueprint  place={this.state.place}
+                        update={this._updatePlace}/>
+          )}
         </div>
     )
   }

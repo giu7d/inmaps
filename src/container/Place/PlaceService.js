@@ -85,24 +85,29 @@ export default class PlaceService {
 				.then((url) => {
 					
 					const { id, blueprint } = place;
+					
+					const bl = {
+						url: url,
+						image: hashFileName,
+						border: null,
+						scale: 1,
+						rotation: 0
+					}
 					// Set Blueprint to Place
 					this.update(id, {
 						...place,
 						blueprint: [
 							...blueprint, 
-							{
-								url: url,
-								image: hashFileName,
-								border: null,
-								scale: 1,
-								rotation: 0
-							}
+							bl
 						]	
 					});
+
+					return bl;
+					
 				})
-				.then(() => {
+				.then((blueprint) => {
 					load();
-					callback();
+					callback(blueprint);
 				})
 				.catch(err => error(err));
 			});

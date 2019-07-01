@@ -167,12 +167,17 @@ class Blueprint extends Component {
       }
     })
 
-    console.log(blueprints);
-
     place.blueprint = [...blueprints];
     this.props.update(place);
   }
 
+  clear = () => {
+    this.state.overlays.map(overlay => overlay.setMap(null));
+    this.props.setTransformFunction(null);
+    this.props.setPositionFunction(null);
+    this.props.setDeleteFunction(null);
+    this.props.setSaveFunction(null);
+  }
 
   componentWillMount() {
     // Map functions to redux
@@ -188,14 +193,8 @@ class Blueprint extends Component {
     }
   }
 
-
-
   componentWillUnmount() {
-    this.state.overlays.map(overlay => overlay.setMap(null));
-    this.props.setTransformFunction(null);
-    this.props.setPositionFunction(null);
-    this.props.setDeleteFunction(null);
-    this.props.setSaveFunction(null);
+    this.clear();
   }
 
   

@@ -13,11 +13,12 @@ class Layer extends Component {
       switch (this.props.layerView) {
         case 'BLUEPRINT_UPLOAD':
           return (
-          <BlueprintUpload  place={ this.props.place } />
+          <BlueprintUpload  place={ this.props.place }
+                            setBlueprint={this.props.setBlueprint} />
           );
         case 'BLUEPRINT_OPTIONS':
           return (
-            <BlueprintOptions place={ this.props.place } />
+            <BlueprintOptions place={ this.props.place }/>
           );
         
         case 'BORDER_OPTIONS':

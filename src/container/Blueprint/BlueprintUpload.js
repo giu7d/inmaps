@@ -12,8 +12,10 @@ class BlueprintUpload extends Component {
 
   _fileUpload = (fieldName, file, metadata, load, error, progress, abort) => {
 
-    PlaceService.upload(this.props.place, file, progress, load, error, () => {
-      this.props.setLayerView(null);   
+    PlaceService.upload(this.props.place, file, progress, load, error, (blueprint) => {
+      
+      this.props.setLayerView(null);
+      this.props.setBlueprint(blueprint);
     });
   }
 
