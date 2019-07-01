@@ -1,14 +1,12 @@
 /* global google */
 
-import React, { Component } from 'react';
-import Utils from '../../utils/Utils';
+import { Component } from 'react';
 import { connect } from 'react-redux';
+import Utils from '../../utils/Utils';
+import { Actions } from '../../store/Actions';
 
-import { Timeline } from '@material-ui/icons';
-import { IconButton } from '../../presentational';
 
-
-class PlaceBorder extends Component{
+class Border extends Component{
 
   create = () => {
 
@@ -20,7 +18,7 @@ class PlaceBorder extends Component{
 
       google.maps.event.clearListeners(poly, 'polygoncomplete'); 
       Utils.setDrawingMode(drawAPI, null);
-      Utils.addPolygonEvents(poly, this.save);
+      Utils.addPolygonEvents(poly, this.save, this.openOptions);
       
       this.save(poly);
     });
@@ -69,6 +67,10 @@ class PlaceBorder extends Component{
     this.props.setBorder(polygons);
   }
 
+  componentWillMount() {
+    this.props.setCreateBorder(this.create);
+  }
+
   componentDidMount() {
     if (this.props.place.border.lenght !== 0) {
       this.load();
@@ -79,11 +81,7 @@ class PlaceBorder extends Component{
     Utils.removeAllPolygonsEvents(this.props.place.border);
   }
 
-  render() {
-    return (
-      <IconButton icon={<Timeline />} title="Criar Contorno" action={this.create} />
-    )
-  }
+  render() { return null }
 }
 
 
@@ -94,6 +92,16 @@ const mapStateToProps = (state) => {
   return {...state};
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCreateBorder: (func) => dispatch({
+      type: Actions.createBorderFunc,
+      createFunc: func
+    }),
+  }
+}
+
 export default connect(
-  mapStateToProps
-)(PlaceBorder)
+  mapStateToProps,
+  mapDispatchToProps
+)(Border)

@@ -14,8 +14,7 @@ export { default as PrimaryButton } from './Button/PrimaryButton';
 export { default as SecundaryButton } from './Button/SecundaryButton';
 export { default as CleanButton } from './Button/CleanButton';
 export { default as IconButton } from './Button/IconButton';
-// Map
-export { default as BaseMap } from './Map/BaseMap';
+export { default as DangerButton } from './Button/DangerButton';
 //Modal
 export { default as Modal} from './Modal/Modal';
 // Form

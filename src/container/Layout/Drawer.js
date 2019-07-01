@@ -11,7 +11,8 @@ const styles = {
   drawer: {
     width: `375px`,
     height: `100vh`,
-    overflow: 'hidden'
+    overflowX: 'hidden',
+    overflowY: 'auto'
   }
 }
 
@@ -34,10 +35,10 @@ class Drawer extends Component {
       <MaterialDrawer anchor="left"
                       variant="permanent">
 
-          <div className={classes.drawer}>
 
-            <AppBar action={ this._setURLToHome }/>
-            
+          <AppBar action={ this._setURLToHome }/>
+
+          <div className={classes.drawer}>
             <Route  path="/" 
                     exact 
                     component={PlaceList} />

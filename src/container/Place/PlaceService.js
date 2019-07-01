@@ -60,38 +60,51 @@ export default class PlaceService {
 				});
 	}
  
+	static upload = (place, file, progress, load, error, callback) => {
 
-	static upload = (place, file, progress, load, error, complete) => {
-
+		// Hash file name
 		const hashFileName = new Hash.MD5().hex(file.name + (Math.random() * 1000 * file.size));
-
+		// Set Firebase storage folder
+		const storageLocation = 'blueprint/'
+		// Ref()
 		const storageRef = fireStorage.ref();
-		
 		const metadata = {
 			contentType: file.type,
 		}
 
-		const uploadTask = storageRef.child('blueprints/' + hashFileName).put(file, metadata);
+		// Start Upload
+		const uploadTask = storageRef.child(storageLocation + hashFileName).put(file, metadata);
 
+		// On finished
 		uploadTask.on('state_changed',
 			(snapshot) => progress((snapshot.state === 'running'), snapshot.bytesTransferred, snapshot.totalBytes),
-			(e) => error('Oh NO!!'),
+			(err) => error(err),
 			() => {
-				
-				const { id, blueprint } = place;
-
-				this.update(id, {
-					...place,
-					blueprint: [
-						...blueprint, 
-						{
-							image: hashFileName,
-							border: []
-						}
-					]	
-				});
-				load();
-				complete();
+				// Get File URL
+				storageRef.child(storageLocation + '/' + hashFileName).getDownloadURL()
+				.then((url) => {
+					
+					const { id, blueprint } = place;
+					// Set Blueprint to Place
+					this.update(id, {
+						...place,
+						blueprint: [
+							...blueprint, 
+							{
+								url: url,
+								image: hashFileName,
+								border: null,
+								scale: 1,
+								rotation: 0
+							}
+						]	
+					});
+				})
+				.then(() => {
+					load();
+					callback();
+				})
+				.catch(err => error(err));
 			});
 				
 		

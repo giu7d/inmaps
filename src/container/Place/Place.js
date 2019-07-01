@@ -5,10 +5,11 @@ import { PlaceTwoTone, AddLocation } from '@material-ui/icons';
 import { Header, HeaderSubtitle, HeaderControl, IconButton } from '../../presentational';
 import Skeleton from 'react-loading-skeleton';
 import PlaceService from './PlaceService';
-import PlaceBorder from './PlaceBorder';
-import PlaceOverlay from './PlaceOverlay';
-import PlaceUpload from './PlaceUpload';
-
+import Layer from '../Layer/Layer';
+import Border from '../Border/Border';
+import BlueprintButton from '../Blueprint/BlueprintButton';
+import Blueprint from '../Blueprint/Blueprint';
+import BorderButton from '../Border/BorderButton';
 
 class Place extends Component {
 
@@ -25,9 +26,9 @@ class Place extends Component {
       blueprint: [],
       tag: [],
       creationTime: null,
-    },
-    isUploading: false,
+    }
   }
+
 
   // 
   // URL
@@ -88,13 +89,6 @@ class Place extends Component {
     });
   }
 
-  // Upload
-  toogleUpload = () => {
-    this.setState({
-      isUploading: !this.state.isUploading
-    })
-  }
-
   // 
   // React Components
   // 
@@ -114,18 +108,22 @@ class Place extends Component {
             <HeaderSubtitle>
             </HeaderSubtitle>
               <HeaderControl>
-                <PlaceBorder  place={this.state.place} 
-                              update={this._updatePlace}
-                              setBorder = {this._setPlaceBorder} />
-                <PlaceOverlay place={this.state.place}
-                              toogleUpload={this.toogleUpload}
-                              isDisabled={this.state.isUploading}  />
-
-                <IconButton icon={<AddLocation />} title="Marcar Salas" />
+                {/* Buttons */}
+                <BorderButton />
+                <BlueprintButton />
+                {/* <IconButton icon={<AddLocation />} title="Marcar Salas" />  */}
               </HeaderControl>
           </Header>
-          {(this.state.isUploading) && <PlaceUpload place={this.state.place} 
-                                                    toogleUpload={this.toogleUpload} />}
+          <Layer  place={this.state.place}
+                  overlays={this.state.overlay} />
+
+          {/* Start Map Integration Components */}
+          {/* and load of the map objects for each type */}
+          <Border place={this.state.place}
+                  update={this._updatePlace}
+                  setBorder={this._setPlaceBorder} />
+          <Blueprint  place={this.state.place}
+                      update={this._updatePlace}/>
         </div>
     )
   }

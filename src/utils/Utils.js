@@ -27,6 +27,16 @@ export default class Utils {
   }
 
 
+  static getImageMeta = async (url) => {
+    return new Promise(res => {
+      const img = new Image();
+      img.src = url;
+      img.addEventListener("load",() => res({width: img.width, height: img.height}));
+    });
+  }
+
+
+
   // Maps
   static setDrawingMode = (drawAPI, overlayType) => {
       drawAPI.setOptions({
@@ -47,10 +57,11 @@ export default class Utils {
     google.maps.event.addListener(drawAPI, action, callback);
   }
 
-  static addPolygonEvents = (polygon, callback) => {
+  static addPolygonEvents = (polygon, callback, clickCallback = null) => {
     const path = polygon.getPath();
     google.maps.event.addListener(path, 'insert_at', () => callback(polygon));
     google.maps.event.addListener(path, 'set_at', () => callback(polygon));
+    // google.maps.event.addListener(polygon, 'click', () => clickCallback(polygon));
   }
 
   static removePolygonEvents = (polygon) => {

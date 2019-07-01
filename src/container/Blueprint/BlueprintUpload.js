@@ -1,19 +1,21 @@
 import React, { Component } from 'react'
 import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
+import { connect } from 'react-redux';
 import { Grid } from '@material-ui/core';
-import { SecundaryButton } from '../../presentational';
-
-import PlaceService from './PlaceService';
 import { Close } from '@material-ui/icons';
+import { SecundaryButton } from '../../presentational';
+import { Actions } from '../../store/Actions';
+import PlaceService from '../Place/PlaceService';
 
-class PlaceUpload extends Component {
+class BlueprintUpload extends Component {
 
   _fileUpload = (fieldName, file, metadata, load, error, progress, abort) => {
 
-    PlaceService.upload(this.props.place, file, progress, load, error, this.props.toogleUpload);
+    PlaceService.upload(this.props.place, file, progress, load, error, () => {
+      this.props.setLayerView(null);   
+    });
   }
-
 
   render() {
     return (
@@ -29,15 +31,35 @@ class PlaceUpload extends Component {
           }}/>
         </Grid>
         <Grid item
-              xs={6}>
+              xs={7}>
             <SecundaryButton  icon={<Close />} 
                               title="Cancelar" 
                               gridSize={12} 
-                              action={this.props.toogleUpload} />
+                              action={() => this.props.setLayerView(null)} />
         </Grid>
       </Grid>
     )
   }
 }
 
-export default PlaceUpload
+
+// 
+// REDUX
+// 
+const mapStateToProps = (state) => {
+  return {...state};
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setLayerView: (TYPE) => dispatch({
+      type: Actions.setLayerView,
+      layerView: TYPE
+    })
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BlueprintUpload)
