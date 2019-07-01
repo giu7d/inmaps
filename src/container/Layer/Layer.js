@@ -33,8 +33,10 @@ class Layer extends Component {
                   style={{marginTop: `25%`}}>
               <Grid item
                     xs={10}>
-                <Typography variant="subtitle1">
-                  Sem camadas de dados. 
+                <Typography variant = "subtitle1"
+                            align = "center">
+                  Sem camadas de dados. <br />
+                  o.0
                 </Typography>
               </Grid>
             </Grid>

@@ -101,6 +101,34 @@ class Blueprint extends Component {
     overlays.splice(index, 1);
     
     this.setState({ overlays: [...overlays] });
+
+    // Upload
+
+    const { place } = this.props;
+
+    const blueprints = overlays.map(overlay => {
+      return {
+        url: overlay._src,
+        image: overlay._image,
+        border: {
+          sw: {
+            latitude: overlay._bounds.getSouthWest().lat(),
+            longitude: overlay._bounds.getSouthWest().lng(),
+          },
+          ne: {
+            latitude: overlay._bounds.getNorthEast().lat(),
+            longitude: overlay._bounds.getNorthEast().lng(),
+          }
+        },
+        scale: overlay._scale,
+        rotation: overlay._rotation
+      }
+    })
+
+    console.log(blueprints);
+
+    place.blueprint = [...blueprints];
+    this.props.update(place);
   }
 
   save = (overlay) => {

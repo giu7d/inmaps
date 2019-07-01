@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { List } from '@material-ui/core';
+import { List, Typography, Grid } from '@material-ui/core';
 
 import { Add, PlaceTwoTone } from '@material-ui/icons';
 import { Header, HeaderControl, PrimaryButton, Modal } from '../../presentational';
@@ -14,14 +14,15 @@ class PlaceList extends Component {
   
   state = {
     modal: false,
-    places: []
+    places: [],
+    load: false,
   }
 
   _setPlace = () => {
 
     PlaceService.getAll(res => {
       try {
-        this.setState({ places: res });
+        this.setState({ places: res, load: true });
       }
       catch (err) {
         console.log(err);
@@ -72,6 +73,7 @@ class PlaceList extends Component {
           </HeaderControl>
         </Header>
 
+        {(this.state.load) ? (
         <List style={{ marginTop: 24}}>
           {(this.state.places.length !== 0) ? this.state.places.map((el) => (
               <PlaceItem  key={el.key}
@@ -79,8 +81,23 @@ class PlaceList extends Component {
                           title={el.data.title}
                           date={el.data.creationTime}
                           onDelete={this._deletePlace} />
-          )) : skeleton() }
+          )) : (
+          
+            <Grid container
+                  justify="center"
+                  spacing={3}
+                  style={{marginTop: `25%`}}>
+              <Grid item
+                    xs={10}>
+                <Typography variant="subtitle1" align="center">
+                  Você não possui nenhum projeto criado.<br /> 
+                  :P 
+                </Typography>
+              </Grid>
+            </Grid>
+          )}
         </List>
+        ) : skeleton() }
 
         {/* MODAL */}
         <Modal open={this.state.modal} action={this._toggleModal}>
