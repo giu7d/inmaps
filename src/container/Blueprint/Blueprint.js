@@ -47,7 +47,6 @@ class Blueprint extends Component {
       const newPointB = markerB.getPosition();
       const newBounds = new google.maps.LatLngBounds(newPointA, newPointB);
       overlay.updateBounds(newBounds);
-      this.save(overlay)
     }
 
     Utils.addListener(markerA, 'drag', updatePoints);
@@ -79,12 +78,12 @@ class Blueprint extends Component {
     });    
   }
 
-  position = (overlay) => {
+  position = (overlay, visibility) => {
 
     const { markerA, markerB } = overlay;
     
-    markerA.setVisible(!markerA.getVisible());
-    markerB.setVisible(!markerB.getVisible());
+    markerA.setVisible(visibility);
+    markerB.setVisible(visibility);
     
   }
 
@@ -159,6 +158,16 @@ class Blueprint extends Component {
     if (this.props.place.blueprint.lenght !== 0){
       this.load();
     }
+  }
+
+
+
+  componentWillUnmount() {
+    this.state.overlays.map(overlay => overlay.setMap(null));
+    this.props.setTransformFunction(null);
+    this.props.setPositionFunction(null);
+    this.props.setDeleteFunction(null);
+    this.props.setSaveFunction(null);
   }
 
   

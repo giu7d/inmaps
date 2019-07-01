@@ -70,7 +70,7 @@ class BlueprintOptions extends Component {
 
   _coordSelectorHandler = (e) => {
     const { positionFunc } = this.props.overlay;
-    positionFunc(window.selectOverlay);
+    positionFunc(window.selectOverlay, true);
   }
 
   _rotateHandler = (e, value) => {
@@ -90,22 +90,20 @@ class BlueprintOptions extends Component {
 
   _deleteHandler = () => {
 
-    const { deleteFunc } = this.props.overlay;
+    const { deleteFunc, positionFunc } = this.props.overlay;
+    positionFunc(window.selectOverlay, false);
     deleteFunc(window.selectOverlay);
 
     this.props.setLayerView(null);    
   }
 
   _completeHandler = () => {
-    this.props.overlay.saveFunc(window.selectOverlay);
+    const { positionFunc, saveFunc} = this.props.overlay;
+
+    positionFunc(window.selectOverlay, false);
+    saveFunc(window.selectOverlay);
     this.props.setLayerView(null);
   }
-
-
-  componentDidMount() {
-    console.log(window.selectOverlay);
-  }
-
 
   render() {
 
@@ -119,10 +117,6 @@ class BlueprintOptions extends Component {
               xs={10}>
           <Typography variant="h5" gutterBottom>
             Planta
-          </Typography>
-
-          <Typography variant="caption" gutterBottom>
-            {/* [url: {this.props.selectOverlay._image}] */}
           </Typography>
         </Grid>
 

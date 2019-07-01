@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import BlueprintUpload from '../Blueprint/BlueprintUpload';
 import BlueprintOptions from '../Blueprint/BlueprintOptions';
 import BorderOptions from '../Border/BorderOptions';
+import { Grid, Typography } from '@material-ui/core';
 
 class Layer extends Component {
   
@@ -26,7 +27,17 @@ class Layer extends Component {
 
         default:
           return (
-            <h1>Layer</h1>
+            <Grid container
+                  justify="center"
+                  spacing={3}
+                  style={{marginTop: `25%`}}>
+              <Grid item
+                    xs={10}>
+                <Typography variant="subtitle1">
+                  Sem camadas de dados. 
+                </Typography>
+              </Grid>
+            </Grid>
           );
       }
     }
