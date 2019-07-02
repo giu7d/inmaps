@@ -1,66 +1,33 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux';
-import BlueprintUpload from '../Blueprint/BlueprintUpload';
-import BlueprintOptions from '../Blueprint/BlueprintOptions';
-import BorderOptions from '../Border/BorderOptions';
 import { Grid, Typography } from '@material-ui/core';
+import { Link, withRouter } from 'react-router-dom';
 
 class Layer extends Component {
   
+
   
   render() {
-    const layerView = () => {
-      switch (this.props.layerView) {
-        case 'BLUEPRINT_UPLOAD':
-          return (
-          <BlueprintUpload  place={ this.props.place }
-                            setBlueprint={this.props.setBlueprint} />
-          );
-        case 'BLUEPRINT_OPTIONS':
-          return (
-            <BlueprintOptions place={ this.props.place }/>
-          );
-        
-        case 'BORDER_OPTIONS':
-          return (
-            <BorderOptions />
-          );
-
-        default:
-          return (
-            <Grid container
-                  justify="center"
-                  spacing={3}
-                  style={{marginTop: `25%`}}>
-              <Grid item
-                    xs={10}>
-                <Typography variant = "subtitle1"
-                            align = "center">
-                  Sem camadas de dados. <br />
-                  o.0
-                </Typography>
-              </Grid>
-            </Grid>
-          );
-      }
-    }
-
-
+    
+    const { match } = this.props;
+    
     return (
-      <div>
-        {layerView()}
-      </div>
-    )
+      <Grid container
+            justify="center"
+            spacing={3}
+            style={{marginTop: `25%`}}>
+        <Grid item
+              xs={10}>
+          <Link to={`${match.params.id}/blueprint/0/options`}>
+            <Typography variant = "subtitle1"
+                        align = "center">
+              Sem camadas de dados. <br />
+              o.0
+            </Typography>
+          </Link>
+        </Grid>
+      </Grid>
+    );
   }
 }
 
-// 
-// REDUX
-// 
-const mapStateToProps = (state) => {
-  return {...state};
-}
-
-export default connect(
-  mapStateToProps
-)(Layer);
+export default withRouter(Layer);

@@ -1,25 +1,31 @@
 import React, { Component } from 'react'
 import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
-import { connect } from 'react-redux';
 import { Grid } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+import { Done } from '@material-ui/icons';
 import { SecundaryButton } from '../../presentational';
-import { Actions } from '../../store/Actions';
 import PlaceService from '../Place/PlaceService';
+import { withRouter } from 'react-router-dom';
 
 class BlueprintUpload extends Component {
 
   _fileUpload = (fieldName, file, metadata, load, error, progress, abort) => {
+    PlaceService.upload(this.props.place, file, progress, load, error, this._save);
+  }
 
-    PlaceService.upload(this.props.place, file, progress, load, error, (blueprint) => {
-      
-      this.props.setLayerView(null);
-      this.props.setBlueprint(blueprint);
-    });
+  _save = (blueprint) => {
+
+    const { place, update } = this.props;
+    
+    place.blueprint.push(blueprint);
+    
+    update(place);    
   }
 
   render() {
+
+    const { history, match } = this.props;
+
     return (
       <Grid container 
             justify="center"
@@ -34,10 +40,10 @@ class BlueprintUpload extends Component {
         </Grid>
         <Grid item
               xs={7}>
-            <SecundaryButton  icon={<Close />} 
-                              title="Cancelar" 
-                              gridSize={12} 
-                              action={() => this.props.setLayerView(null)} />
+          <SecundaryButton  icon={<Done />} 
+                            title="Pronto" 
+                            gridSize={12}
+                            action={() => history.push(`/place/${match.params.id}`)} />
         </Grid>
       </Grid>
     )
@@ -45,23 +51,4 @@ class BlueprintUpload extends Component {
 }
 
 
-// 
-// REDUX
-// 
-const mapStateToProps = (state) => {
-  return {...state};
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setLayerView: (TYPE) => dispatch({
-      type: Actions.setLayerView,
-      layerView: TYPE
-    })
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BlueprintUpload)
+export default withRouter(BlueprintUpload);

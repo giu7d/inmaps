@@ -1,9 +1,10 @@
 /* global google */ 
 
-export default function BlueprintOverlay(map, blueprint, markerA, markerB, onClick) {
+let that = {};
+
+export default function BlueprintOverlay(map, blueprint, markerA, markerB, saveFunc, deleteFunc) {
   
   const {image, url, border, rotation, scale} = blueprint;
-
 
   this._bounds = border;
   this._image = image;
@@ -12,7 +13,9 @@ export default function BlueprintOverlay(map, blueprint, markerA, markerB, onCli
   this._div = null;
   this._rotation = rotation;
   this._scale = scale;
-  this._onClick = onClick
+
+  this._saveFunc = saveFunc;
+  this._deleteFunc = deleteFunc;
   
   this.markerA = markerA;
   this.markerB = markerB;
@@ -37,8 +40,6 @@ BlueprintOverlay.prototype.onAdd = function () {
 
 
   div.appendChild(img);
-
-  google.maps.event.addDomListener(div, 'click', this._onClick);
 
   this._div = div;
   
@@ -73,7 +74,49 @@ BlueprintOverlay.prototype.updateTransform = function (rotation, scale) {
   this.draw();
 };
 
+BlueprintOverlay.prototype.updateMarkersVisibility = function (STATE) {
+  this.markerA.setVisible(STATE);
+  this.markerB.setVisible(STATE); 
+}
+
 BlueprintOverlay.prototype.onRemove = function () {
   this._div.parentNode.removeChild(this._div);
   this._div = null;
 };
+
+
+BlueprintOverlay.prototype.getAsBlueprint = function () {
+  return {
+    image: this._image,
+    url: this._src,
+    border: {
+      sw: {
+        latitude: this._bounds.getSouthWest().lat(),
+        longitude: this._bounds.getSouthWest().lng(),
+      },
+      ne: {
+        latitude: this._bounds.getNorthEast().lat(),
+        longitude: this._bounds.getNorthEast().lng(),
+      }
+    },
+    scale: this._scale,
+    rotation: this._rotation
+  }
+}
+
+
+BlueprintOverlay.prototype.loadLeastSavedState = function () {
+  this.updateBounds(that._bounds);
+  this.updateTransform(that._rotation, that._scale);
+  this.markerA = that.markerA;
+  this.markerB = that.markerB;
+}
+
+BlueprintOverlay.prototype.save = function () {
+  that = {...this};
+  this._saveFunc(this);
+}
+
+BlueprintOverlay.prototype.persistDeletion = function (index) {
+  this._deleteFunc(index);
+}

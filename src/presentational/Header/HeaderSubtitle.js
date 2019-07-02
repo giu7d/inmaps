@@ -10,7 +10,7 @@ const headerSubtitle = (props) => {
           justify="center">
       <Grid item 
             xs={10}>
-        <Typography variant="subtitle2"
+        <Typography variant="caption"
                     gutterBottom>
           { children }
         </Typography>

@@ -11,8 +11,7 @@ const styles = {
   drawer: {
     width: `375px`,
     height: `100vh`,
-    overflowX: 'hidden',
-    overflowY: 'auto'
+    overflowX: 'hidden'
   }
 }
 
@@ -34,7 +33,6 @@ class Drawer extends Component {
     return (
       <MaterialDrawer anchor="left"
                       variant="permanent">
-
 
           <AppBar action={ this._setURLToHome }/>
 

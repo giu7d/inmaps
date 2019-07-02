@@ -6,10 +6,14 @@ import { Header, HeaderSubtitle, HeaderControl } from '../../presentational';
 import Skeleton from 'react-loading-skeleton';
 import PlaceService from './PlaceService';
 import Layer from '../Layer/Layer';
-import Border from '../Border/Border';
-import BlueprintButton from '../Blueprint/BlueprintButton';
+// import Border from '../Border/Border';
+// import BorderButton from '../Border/BorderButton';
 import Blueprint from '../Blueprint/Blueprint';
-import BorderButton from '../Border/BorderButton';
+import BlueprintOptions from '../Blueprint/BlueprintOptions';
+import BlueprintButton from '../Blueprint/BlueprintButton';
+import { Route, withRouter } from 'react-router-dom';
+import { Grid } from '@material-ui/core';
+import BlueprintUpload from '../Blueprint/BlueprintUpload';
 
 class Place extends Component {
 
@@ -29,19 +33,13 @@ class Place extends Component {
     }
   }
 
-
-  // 
-  // URL
-  // 
-  _getURLParams = () => {
+  // Get Id From URL Parameters and Set State
+  _getIDFromURL = () => {
     const params = this.props.match.params;
     this.setState({ urlId: params.id });
   }
 
-
-  // 
-  // Place
-  // 
+  // Get Place From Id State
   _getPlaceById = () => {
 
     PlaceService.getById(this.state.urlId, (res) => {        
@@ -64,12 +62,17 @@ class Place extends Component {
 
     });
   }
+  
+  _errorHandler = (e) => {
+    // If error set URL Path to component ErrorLayer; 
+  }
 
-  _updatePlace = (place) => {
+  // Update Place State and Firebase
+  updatePlace = (place) => {
     
-    this.setState({
-      place: {...place}  
-    })
+    console.log(place);
+
+    this.setState({ place: {...place} });
 
     try {  
       PlaceService.update(this.state.place.id, place);
@@ -78,35 +81,8 @@ class Place extends Component {
     }
   }
 
-  _setPlaceBorder = (border) => {
-
-    const { place } = this.state;
-
-    place.border = [...border];
-
-    this.setState({
-      place: {...place}
-    });
-  }
-
-  _setPlaceBlueprint = (blueprint) => {
-
-    const { place } = this.state;
-
-    place.blueprint.push(blueprint);
-
-    this.setState({
-      place: {...place}
-    });
-
-    this.forceUpdate();
-  }
-
-  // 
-  // React Components
-  // 
   componentWillMount() {
-    this._getURLParams();
+    this._getIDFromURL();
   }
 
   componentDidMount() {
@@ -115,33 +91,84 @@ class Place extends Component {
 
 
   render() {
+
+    const { match } = this.props
+
+    const skeletonArea = (
+      <Grid container
+            spacing={5}
+            style={{ margin: 25 }}>
+        <Grid item
+              xs={5}>
+          <Skeleton />
+        </Grid>
+        <Grid item
+              xs={8}>
+          <Skeleton count={3} />
+        </Grid>
+        <Grid item
+              xs={8}>
+          <Skeleton count={3} />
+        </Grid>
+        <Grid item
+              xs={8}>
+          <Skeleton count={3} />
+        </Grid>
+      </Grid>
+    );
+
     return (this.state.place.id !== '') && (
         <div>
-          <Header icon={<PlaceTwoTone />} title={this.state.place.title || <Skeleton />}>
-            <HeaderSubtitle>
-            </HeaderSubtitle>
-              <HeaderControl>
-                {/* Buttons */}
-                <BorderButton />
-                <BlueprintButton />
-                {/* <IconButton icon={<AddLocation />} title="Marcar Salas" />  */}
-              </HeaderControl>
-          </Header>
-          <Layer  place={this.state.place}
-                  overlays={this.state.overlay}
-                  setBlueprint={this._setPlaceBlueprint} />
 
-          {/* Start Map Integration Components */}
-          {/* and load of the map objects for each type */}
-          
-          <Border place={this.state.place}
+          {/* Header Element */}
+          {/* Display Project Infos & Controls */}
+          <Header icon={<PlaceTwoTone />} 
+                  title={this.state.place.title || <Skeleton />}>
+
+            <HeaderSubtitle>
+              {this.state.place.description || <Skeleton count={3} />}
+            </HeaderSubtitle>
+
+            {/* Control Buttons */}
+            <HeaderControl>
+              {/* <BorderButton /> TODO: -> Create new Border => Create Poligon, Save, Show Options */}
+              <BlueprintButton />{/* Create new Blueprint => Upload File, Create Overlay, Save, Show Options*/}
+                {/* <IconButton icon={<AddLocation />} title="Marcar Salas" />  */}
+            </HeaderControl>
+          </Header>
+
+          {/* Routes*/}
+          <div>
+            {/* Layer
+              * On path / place /: id */}
+            <Route path={`${match.path}/`} exact render={props => (
+              <Layer {...props} place={this.state.place} />
+            )}/>
+            
+            {/* Blueprint Options
+              * On path /place/:id/blueprint/:overlayIndex/options */}
+            <Route path={`${match.path}/blueprint/:overlayIndex/options`} exact render={props => (
+              (this.props.overlays.length !== 0) ? <BlueprintOptions {...props} place={this.state.place} /> : skeletonArea
+            )}/>
+
+            {/* Blueprint Upload
+              * On path /place/:id/blueprint/ */}
+            <Route path={`${match.path}/blueprint`} exact render={props => (
+              <BlueprintUpload {...props} place={this.state.place}
+                                          update={this.updatePlace} />
+            )}/>
+            
+          </div>
+
+
+          {/* Initiate Types Instances */}
+          {/* <Border place={this.state.place}
                   update={this._updatePlace}
-                  setBorder={this._setPlaceBorder} />
-          
-          {(this.state.place.blueprint.length !== 0) && (
-            <Blueprint  place={this.state.place}
-                        update={this._updatePlace}/>
-          )}
+                  setBorder={this._setPlaceBorder} /> */}
+
+          {(this.state.place.blueprint.length !== 0) && <Blueprint  place={this.state.place}
+                                                                    update={this.updatePlace}/>}
+         
         </div>
     )
   }
@@ -169,4 +196,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Place);
+)(withRouter(Place));

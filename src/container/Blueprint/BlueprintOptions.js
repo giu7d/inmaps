@@ -1,14 +1,13 @@
-import React, { Component } from 'react'
-
-import { Grid, Typography } from '@material-ui/core';
-import { Done, Delete, Edit } from '@material-ui/icons';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Grid, Typography, Paper } from '@material-ui/core';
+import { Done, Delete, Close, SettingsOutlined } from '@material-ui/icons';
 import { withStyles } from '@material-ui/styles';
 import Slider from '@material-ui/lab/Slider';
-
-import { connect } from 'react-redux';
-import { Actions } from '../../store/Actions';
-
 import { SecundaryButton, DangerButton } from '../../presentational';
+import { Actions } from '../../store/Actions';
+import { withRouter } from 'react-router-dom';
+
 
 const CustomSlider = withStyles({
   root: {
@@ -59,75 +58,125 @@ const CustomSlider = withStyles({
   }
 })(Slider);
 
-
-
 class BlueprintOptions extends Component {
 
   state = {
-    rotation: 0,
-    scale: 1
+    overlayIndex: null,
+    rotation: null,
+    scale: null
   }
 
-  _coordSelectorHandler = (e) => {
-    const { positionFunc } = this.props.overlay;
-    positionFunc(window.selectOverlay, true);
+
+  _init = () => {
+
+    const { blueprint } = this.props.place;
+    const { overlayIndex } = this.props.match.params;
+    
+    const bl = blueprint[overlayIndex];
+
+    this.setState({
+      overlayIndex: overlayIndex,
+      rotation: bl.rotation,
+      scale: bl.scale
+    });
   }
 
-  _rotateHandler = (e, value) => {
+  _rotate = (e, angle) => {
 
-    const { transformFunc } = this.props.overlay;
-    transformFunc(window.selectOverlay, value, this.state.scale);
+    const { overlays } = this.props;
+    const overlay = overlays[this.state.overlayIndex];
 
-    this.setState({ rotation: value });
-  };
+    overlay.updateTransform(angle, this.state.scale);
 
-  _scaleHandler = (e, value) => {
-    const { transformFunc } = this.props.overlay;
-    transformFunc(window.selectOverlay, this.state.rotation, value);
-
-    this.setState({ scale: value });
-  };
-
-  _deleteHandler = () => {
-
-    const { deleteFunc, positionFunc } = this.props.overlay;
-    positionFunc(window.selectOverlay, false);
-    deleteFunc(window.selectOverlay);
-
-    this.props.setLayerView(null);    
+    this.setState({ 
+      rotation: angle 
+    });
   }
 
-  _completeHandler = () => {
-    const { positionFunc, saveFunc} = this.props.overlay;
+  _scale = (e, scale) => {
 
-    positionFunc(window.selectOverlay, false);
-    saveFunc(window.selectOverlay);
-    this.props.setLayerView(null);
+    const { overlays } = this.props;
+    const overlay = overlays[this.state.overlayIndex];
+
+    overlay.updateTransform(this.state.rotation, scale);
+
+    this.setState({ 
+      scale: scale
+    });
+  }
+
+  _save = () => {
+    const { overlays } = this.props;
+    const overlay = overlays[this.state.overlayIndex];
+
+    overlay.save();
+  }
+
+  _delete = () => {
+    const { overlays } = this.props;
+    const overlay = overlays[this.state.overlayIndex];
+    
+    // Delete from View
+    overlay.setMap(null);
+
+    // Delete from From and Redux State
+    overlay.persistDeletion(this.state.overlayIndex);
+    this.props.history.goBack();
+  }
+
+  _complete = () => {
+    this._save();
+    this.props.history.goBack();
+  }
+
+  _cancel = () => {
+    const { overlays } = this.props;
+    const overlay = overlays[this.state.overlayIndex]; 
+    
+    overlay.loadLeastSavedState();
+    this._init();
+    this.props.history.goBack();
+  }
+
+  _isMarkersVisible = (STATE) => {
+    const { overlays } = this.props;
+    const overlay = overlays[this.state.overlayIndex];
+
+    overlay.updateMarkersVisibility(STATE);
+  }
+
+  componentWillMount() {
+    this._init();
+  }
+
+  componentDidMount() {
+    this._save();
+    this._isMarkersVisible(true);
+  }
+
+  componentWillUnmount() {
+    this._isMarkersVisible(false);
   }
 
   render() {
 
     return (
+      <div>
       <Grid container 
             justify="center"
             spacing={3}
-            style={{marginTop: 25, height: `100%` }}>
-        {/*  Title */}
+            style={{ marginTop: 25, height: `100%` }}>
+        {/* Header */}
         <Grid item 
               xs={10}>
           <Typography variant="h5" gutterBottom>
-            Planta
+            <SettingsOutlined style={{ marginRight: 14 }} />
+            Ajustes da planta
           </Typography>
-        </Grid>
 
-        {/* Cordenate Selection */}
-        <Grid item
-              xs={10}>
-          <Typography gutterBottom>Posição</Typography>
-          <SecundaryButton  icon={<Edit />} 
-                            title="Selecionar coordenada" 
-                            gridSize={12} 
-                            action={this._coordSelectorHandler} />
+          <Typography variant="h5" gutterBottom>
+            
+          </Typography>
         </Grid>
 
         {/* Image Rotation Slider */}
@@ -138,12 +187,11 @@ class BlueprintOptions extends Component {
           <br/>
           <CustomSlider aria-label="rotation" 
                         value={this.state.rotation}
-                        onChange={this._rotateHandler}
+                        onChange={this._rotate}
                         min={-180}
                         max={180}
                         valueLabelDisplay="auto"/>
         </Grid>
-
 
         {/* Image Scale Slider */}
         <Grid item 
@@ -153,30 +201,57 @@ class BlueprintOptions extends Component {
           <br/>
           <CustomSlider aria-label="scale" 
                         value={this.state.scale}
-                        onChange={this._scaleHandler}
+                        onChange={this._scale}
                         step={0.1}
                         min={0.1}
                         max={10}
                         valueLabelDisplay="auto"/>
         </Grid>
 
-        {/* Buttons */}
+        {/* Delete Button */}
         <Grid item
-              xs={7}>
+              xs={9}
+              style={{ marginTop: 25, marginBottom: 90 }}>
           <DangerButton  icon={<Delete />} 
                           title="Excluir" 
                           gridSize={12} 
-                          action={this._deleteHandler} />
+                          action={this._delete} />
         </Grid>
-        <Grid item
-              xs={7}>
-          <SecundaryButton  icon={<Done />} 
-                            title="Pronto" 
-                            gridSize={12} 
-                            action={this._completeHandler} />
-        </Grid>
+
       </Grid>
-      
+      {/* Buttons */}
+      <Paper  elevation={0}
+              style={{
+                position: 'absolute',              
+                bottom:0,
+                width: 340  
+              }}>
+        <Grid container 
+              justify="center"
+              spacing={3}
+              style={{margin:'auto', height: `100%` }}>
+            
+            {/* Cancel */}
+            <Grid item
+                  xs={5}>
+              <SecundaryButton  icon={<Close />} 
+                                title="Cancelar" 
+                                gridSize={12} 
+                                action={this._cancel} />
+            </Grid>
+
+            {/* Save */}
+            <Grid item
+                  xs={5}>
+              <SecundaryButton  icon={<Done />} 
+                                title="Pronto" 
+                                gridSize={12} 
+                                action={this._complete} />
+          </Grid>
+        </Grid>
+
+      </Paper>
+    </div>
     )
   }
 }
@@ -190,14 +265,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setLayerView: (TYPE) => dispatch({
-      type: Actions.setLayerView,
-      layerView: TYPE
-    })
+    setOverlays: (OVERLAYS_ARRAY) => dispatch({
+      type: Actions.setOverlays,
+      overlays: OVERLAYS_ARRAY
+    }),
   }
 }
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(BlueprintOptions)
+)(withRouter(BlueprintOptions))

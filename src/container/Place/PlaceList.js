@@ -42,8 +42,13 @@ class PlaceList extends Component {
   }
   
   componentDidMount = () => {
+
     this._setPlace();
-    this.props.setMapLocation({
+    
+    const { clearOverlays, setMapLocation } = this.props
+
+    clearOverlays();
+    setMapLocation({
       latitude: -14.235004,
       longitude: -51.925279,
       zoom: 3
@@ -131,7 +136,11 @@ const mapDispatchToProps = (dispatch) => {
       lat: position.latitude,
       lng: position.longitude,
       zoom: position.zoom
-    })
+    }), 
+    clearOverlays: () => dispatch({
+      type: Actions.setOverlays,
+      overlays: []
+    }),
   }
 }
 

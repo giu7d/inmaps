@@ -8,11 +8,7 @@ import Utils from '../../utils/Utils';
 
 class Blueprint extends Component {
 
-  
-  state = {
-    overlays: [],
-  }
-
+  // Create Overlay Instances from a Blueprint
   create = (blueprint) => {
 
     const { mapAPI } = this.props.map;
@@ -21,6 +17,7 @@ class Blueprint extends Component {
     const sw = border.getSouthWest();
     const ne = border.getNorthEast();
     
+    // Size/Position COntrol Markers
     const markerA = new google.maps.Marker({
       position: sw,
       visible: false,
@@ -37,11 +34,9 @@ class Blueprint extends Component {
       title: `NE: lat:${ne.lat()} + lng: ${ne.lng()}`
     });
 
-    const overlay = new BlueprintOverlay(mapAPI, blueprint, markerA, markerB, () => {
-      this.props.setLayerView('BLUEPRINT_OPTIONS');
-      window.selectOverlay = overlay;
-    });
+    const overlay = new BlueprintOverlay(mapAPI, blueprint, markerA, markerB, this.save, this.delete);
 
+    //Markers Logic
     const updatePoints = () => {
       const newPointA = markerA.getPosition();
       const newPointB = markerB.getPosition();
@@ -52,14 +47,16 @@ class Blueprint extends Component {
     Utils.addListener(markerA, 'drag', updatePoints);
     Utils.addListener(markerB, 'drag', updatePoints);
 
+
     return overlay;
   }
 
+  //  Load Overlays[] from Place Blueprint[]
   load = () => {
 
     const { blueprint, center } = this.props.place;
 
-    blueprint.forEach(async (bl, index) => { 
+    blueprint.forEach(async (bl) => { 
 
       const {url, border} = bl
       const {width, height} = await Utils.getImageMeta(url);
@@ -78,125 +75,51 @@ class Blueprint extends Component {
     });    
   }
 
-  position = (overlay, visibility) => {
-
-    const { markerA, markerB } = overlay;
-    
-    markerA.setVisible(visibility);
-    markerB.setVisible(visibility);
-    
-  }
-
-  transform = (overlay, angle, scale) => {
-    overlay.updateTransform(angle, scale);
-  }
-  
-  delete = (overlay) => {
-
-    
-    overlay.setMap(null);
-
-    const { overlays } = this.state;
-    const index = overlays.indexOf(overlay);
-    overlays.splice(index, 1);
-    
-    this.setState({ overlays: [...overlays] });
-
-    // Upload
-
-    const { place } = this.props;
-
-    const blueprints = overlays.map(overlay => {
-      return {
-        url: overlay._src,
-        image: overlay._image,
-        border: {
-          sw: {
-            latitude: overlay._bounds.getSouthWest().lat(),
-            longitude: overlay._bounds.getSouthWest().lng(),
-          },
-          ne: {
-            latitude: overlay._bounds.getNorthEast().lat(),
-            longitude: overlay._bounds.getNorthEast().lng(),
-          }
-        },
-        scale: overlay._scale,
-        rotation: overlay._rotation
-      }
-    })
-
-    console.log(blueprints);
-
-    place.blueprint = [...blueprints];
-    this.props.update(place);
-  }
-
+  // Add a new or modified Overlay to Overlays[]
   save = (overlay) => {
 
-    const { overlays } = this.state;
+    const { overlays, setOverlays } = this.props;
     const index = overlays.indexOf(overlay);
 
-    if ( index === -1) {
+    if (index === -1) {
       overlays.push(overlay);
     } else {
       overlays[index] = overlay;
     }
+    
+    setOverlays(overlays);
+    this._store(overlays);
+  }
 
-    this.setState({ overlays: [...overlays] })
+  // Delete from Overlays[]
+  delete = (index) => {
+    
+    const { overlays, setOverlays } = this.props;
 
-    // Upload
+    overlays.splice(index, 1);
+
+    setOverlays(overlays);
+    this._store(overlays);
+  }
+
+  // Persist changes to Redux Store and Firebase
+  _store= (overlays) => {
 
     const { place } = this.props;
-
-    const blueprints = overlays.map(overlay => {
-      return {
-        url: overlay._src,
-        image: overlay._image,
-        border: {
-          sw: {
-            latitude: overlay._bounds.getSouthWest().lat(),
-            longitude: overlay._bounds.getSouthWest().lng(),
-          },
-          ne: {
-            latitude: overlay._bounds.getNorthEast().lat(),
-            longitude: overlay._bounds.getNorthEast().lng(),
-          }
-        },
-        scale: overlay._scale,
-        rotation: overlay._rotation
-      }
-    })
+    const blueprints = overlays.map(overlay => overlay.getAsBlueprint());
 
     place.blueprint = [...blueprints];
     this.props.update(place);
   }
 
-  clear = () => {
-    this.state.overlays.map(overlay => overlay.setMap(null));
-    this.props.setTransformFunction(null);
-    this.props.setPositionFunction(null);
-    this.props.setDeleteFunction(null);
-    this.props.setSaveFunction(null);
-  }
-
-  componentWillMount() {
-    // Map functions to redux
-    this.props.setTransformFunction(this.transform);
-    this.props.setPositionFunction(this.position);
-    this.props.setDeleteFunction(this.delete);
-    this.props.setSaveFunction(this.save);
-  }
-
   componentDidMount() {
-    if (this.props.place.blueprint.lenght !== 0){
+
+    // Load Overlays from Place Blueprit 
+    const { blueprint} = this.props.place;
+    if (blueprint.lenght !== 0){
       this.load();
     }
   }
-
-  componentWillUnmount() {
-    this.clear();
-  }
-
   
   render() { return null }
 
@@ -212,25 +135,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setLayerView: (TYPE) => dispatch({
-      type: Actions.setLayerView,
-      layerView: TYPE
-    }),
-    setTransformFunction: (func) => dispatch({
-      type: Actions.setOverlayTransformFunc,
-      transformFunc: func
-    }),
-    setPositionFunction: (func) => dispatch({
-      type: Actions.setOverlayPositionFunc,
-      positionFunc: func
-    }),
-    setDeleteFunction: (func) => dispatch({
-      type: Actions.setOverlayDeleteFunc,
-      deleteFunc: func
-    }),
-    setSaveFunction: (func) => dispatch({
-      type: Actions.setOverlaySaveFunc,
-      saveFunc: func
+    setOverlays: (OVERLAYS_ARRAY) => dispatch({
+      type: Actions.setOverlays,
+      overlays: OVERLAYS_ARRAY
     }),
   }
 }

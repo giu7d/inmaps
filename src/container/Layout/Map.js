@@ -40,10 +40,7 @@ class Map extends Component {
 
  _startMapAPI = () => {
     return new google.maps.Map(document.getElementById('map'), {
-      center: {
-        lat: this.props.lat,
-        lng: this.props.lng
-      },
+      center:  new google.maps.LatLng(this.props.lat, this.props.lng),
       zoom: this.props.zoom
     });
   }

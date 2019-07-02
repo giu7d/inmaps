@@ -1,38 +1,21 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Actions } from '../../store/Actions';
 import { IconButton } from '../../presentational';
 import { AttachFile } from '@material-ui/icons';
+import { withRouter } from 'react-router-dom';
 
 class BlueprintButton extends Component {  
+  
   render() {
+
+    const { match, history } = this.props;
+
     return (
       <IconButton icon={<AttachFile />} 
                   title="Adicionar Planta" 
-                  action={ () => this.props.setLayerView('BLUEPRINT_UPLOAD') } 
-                  disabled={(this.props.layerView === 'BLUEPRINT_UPLOAD')} />
+                  action={ () => history.push(`/place/${match.params.id}/blueprint`)} />
     )
   }
 
 }
 
-// 
-// Redux
-// 
-const mapStateToProps = (state) => {
-  return {...state};
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setLayerView: (TYPE) => dispatch({
-      type: Actions.setLayerView,
-      layerView: TYPE
-    })
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BlueprintButton)
+export default withRouter(BlueprintButton)
