@@ -12,8 +12,11 @@ const InitialState = {
     lng: -51.925279,
     zoom: 3,
   },
+  place: null,
   overlays: [],
-  contourPolygons: []
+  contourPolygons: [],
+  isContourLoaded: false,
+  isOverlaysLoaded: false,
 }
 
 export const reducer = (state=InitialState, act) => {
@@ -23,11 +26,24 @@ export const reducer = (state=InitialState, act) => {
           setMapLocation, 
           setMapDrawAPI, 
           setOverlays,
-          setContourPolygons
+          setContourPolygons,
+          setPlace,
+          setContourLoaded,
+          setOverlaysLoaded,
+          resetStore
         } = Actions;
 
   switch (type) {
     
+    case resetStore:
+      
+    console.log('reset');
+      // Except map
+      return {
+        ...InitialState,
+        map: {...state.map}
+      }
+
     /**
      * Map Reducer
      * 
@@ -60,6 +76,20 @@ export const reducer = (state=InitialState, act) => {
           drawAPI: act.drawAPI
         }
       }
+    
+
+    /**
+     * Place Reducer
+     * 
+     * Implements:
+     * setPlace
+     */
+    case setPlace:
+      
+      return {
+        ...state,
+        place: {...act.place}
+      }
 
 
     /**
@@ -73,6 +103,12 @@ export const reducer = (state=InitialState, act) => {
         ...state,
         overlays: [...act.overlays]
       }
+    
+    case setOverlaysLoaded:
+      return {
+        ...state,
+        isOverlaysLoaded: act.isOverlaysLoaded
+      }
 
 
     /**
@@ -85,7 +121,13 @@ export const reducer = (state=InitialState, act) => {
       return {
         ...state,
         contourPolygons: [...act.contourPolygons]
-      }      
+      }
+      
+    case setContourLoaded:
+      return {
+        ...state,
+        isContourLoaded: act.isContourLoaded
+      }
 
     default:
       return state;

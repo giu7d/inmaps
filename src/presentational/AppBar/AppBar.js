@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types';
 import { AppBar, Toolbar, Typography, withStyles } from '@material-ui/core';
+import LogOutMenu from './LogOutMenu';
 
 const styles = {
   title: {
@@ -20,7 +21,7 @@ const styles = {
 
 const appBar = (props) => {
 
-  const { classes, action } = props;
+  const { classes, action, user, singOut } = props;
 
   const title = () => (
     <Typography className={classes.title}
@@ -31,6 +32,7 @@ const appBar = (props) => {
     </Typography>
   );
 
+
   return (
     <AppBar className={classes.appBar} 
             position="static" 
@@ -38,6 +40,9 @@ const appBar = (props) => {
             elevation={0}>
         <Toolbar>
           { title() }
+          {user && (
+            <LogOutMenu user={user} singOut={singOut} />
+          )}
         </Toolbar>
     </AppBar>
   )

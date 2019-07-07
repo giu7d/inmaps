@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Grid, Typography, Paper } from '@material-ui/core';
-import { Done, Delete, Close, SettingsOutlined } from '@material-ui/icons';
+import { Done, Delete, SettingsOutlined } from '@material-ui/icons';
 import { withStyles } from '@material-ui/styles';
 import Slider from '@material-ui/lab/Slider';
 import { SecundaryButton, DangerButton } from '../../presentational';
 import { Actions } from '../../store/Actions';
 import { withRouter } from 'react-router-dom';
+import { withBlueprint } from './WithBlueprint';
+import { PropTypes } from 'prop-types';
 
 
 const CustomSlider = withStyles({
@@ -72,12 +74,12 @@ class BlueprintOptions extends Component {
     const { blueprint } = this.props.place;
     const { overlayIndex } = this.props.match.params;
     
-    const bl = blueprint[overlayIndex];
+    const { rotation, scale } = blueprint[overlayIndex];
 
     this.setState({
       overlayIndex: overlayIndex,
-      rotation: bl.rotation,
-      scale: bl.scale
+      rotation: rotation,
+      scale: scale
     });
   }
 
@@ -88,9 +90,7 @@ class BlueprintOptions extends Component {
 
     overlay.updateTransform(angle, this.state.scale);
 
-    this.setState({ 
-      rotation: angle 
-    });
+    this.setState({ rotation: angle });
   }
 
   _scale = (e, scale) => {
@@ -100,41 +100,30 @@ class BlueprintOptions extends Component {
 
     overlay.updateTransform(this.state.rotation, scale);
 
-    this.setState({ 
-      scale: scale
-    });
+    this.setState({ scale: scale });
   }
 
   _save = () => {
-    const { overlays } = this.props;
+    const { overlays, saveBlueprint } = this.props;
     const overlay = overlays[this.state.overlayIndex];
-
-    overlay.save();
+    saveBlueprint(overlay);
   }
 
   _delete = () => {
-    const { overlays } = this.props;
+    const { overlays, deleteBlueprint } = this.props;
     const overlay = overlays[this.state.overlayIndex];
     
     // Delete from View
     overlay.setMap(null);
-
-    // Delete from From and Redux State
-    overlay.persistDeletion(this.state.overlayIndex);
+    this._isMarkersVisible(false);
+    deleteBlueprint(this.state.overlayIndex);
+    
     this.props.history.goBack();
   }
 
   _complete = () => {
     this._save();
-    this.props.history.goBack();
-  }
-
-  _cancel = () => {
-    const { overlays } = this.props;
-    const overlay = overlays[this.state.overlayIndex]; 
-    
-    overlay.loadLeastSavedState();
-    this._init();
+    this._isMarkersVisible(false);
     this.props.history.goBack();
   }
 
@@ -150,13 +139,9 @@ class BlueprintOptions extends Component {
   }
 
   componentDidMount() {
-    this._save();
     this._isMarkersVisible(true);
   }
 
-  componentWillUnmount() {
-    this._isMarkersVisible(false);
-  }
 
   render() {
 
@@ -230,19 +215,10 @@ class BlueprintOptions extends Component {
               justify="center"
               spacing={3}
               style={{margin:'auto', height: `100%` }}>
-            
-            {/* Cancel */}
-            <Grid item
-                  xs={5}>
-              <SecundaryButton  icon={<Close />} 
-                                title="Cancelar" 
-                                gridSize={12} 
-                                action={this._cancel} />
-            </Grid>
 
             {/* Save */}
             <Grid item
-                  xs={5}>
+                  xs={10}>
               <SecundaryButton  icon={<Done />} 
                                 title="Pronto" 
                                 gridSize={12} 
@@ -255,6 +231,12 @@ class BlueprintOptions extends Component {
     )
   }
 }
+
+BlueprintOptions.propTypes = {
+  overlays: PropTypes.array.isRequired,
+  saveBlueprint: PropTypes.func.isRequired,
+};
+
 
 // 
 // REDUX
@@ -275,4 +257,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withRouter(BlueprintOptions))
+)(withBlueprint(withRouter(BlueprintOptions)));

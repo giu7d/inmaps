@@ -41,18 +41,24 @@ class PlaceList extends Component {
     this.setState({modal: !this.state.modal})
   }
   
-  componentDidMount = () => {
+  componentWillMount = () => {
+    const { resetStore, setMapLocation } = this.props;
 
-    this._setPlace();
-    
-    const { clearOverlays, setMapLocation } = this.props
+    resetStore();
 
-    clearOverlays();
     setMapLocation({
       latitude: -14.235004,
       longitude: -51.925279,
       zoom: 3
-    })
+    });
+  }
+
+  componentDidMount = () => {
+    this._setPlace();
+    console.log('reset');
+
+
+    console.log(this.props);
   }
 
   render() {
@@ -137,9 +143,8 @@ const mapDispatchToProps = (dispatch) => {
       lng: position.longitude,
       zoom: position.zoom
     }), 
-    clearOverlays: () => dispatch({
-      type: Actions.setOverlays,
-      overlays: []
+    resetStore: () => dispatch({
+      type: Actions.resetStore
     }),
   }
 }

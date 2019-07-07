@@ -4,22 +4,18 @@ import 'filepond/dist/filepond.min.css';
 import { Grid } from '@material-ui/core';
 import { Done } from '@material-ui/icons';
 import { SecundaryButton } from '../../presentational';
-import PlaceService from '../Place/PlaceService';
 import { withRouter } from 'react-router-dom';
+import { withBlueprint } from './WithBlueprint';
+import { PropTypes } from 'prop-types';
 
 class BlueprintUpload extends Component {
 
-  _fileUpload = (fieldName, file, metadata, load, error, progress, abort) => {
-    PlaceService.upload(this.props.place, file, progress, load, error, this._save);
-  }
-
-  _save = (blueprint) => {
-
-    const { place, update } = this.props;
+  _fileUpload = (fieldName, file, metadata, load, error, progress, abort) => {    
     
-    place.blueprint.push(blueprint);
+    const { uploadBlueprint, history, match } = this.props;
     
-    update(place);    
+    uploadBlueprint(file, { progress, load, error });
+    history.push(`/place/${match.params.id}`);
   }
 
   render() {
@@ -50,5 +46,9 @@ class BlueprintUpload extends Component {
   }
 }
 
+BlueprintUpload.propTypes = {
+  uploadBlueprint: PropTypes.func.isRequired,
+}
 
-export default withRouter(BlueprintUpload);
+
+export default withBlueprint(withRouter(BlueprintUpload));

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { IconButton } from '../../presentational';
-import { AttachFile } from '@material-ui/icons';
+import { Attachment } from '@material-ui/icons';
 import { withRouter } from 'react-router-dom';
+import { withBlueprint } from './WithBlueprint';
 
 class BlueprintButton extends Component {  
   
@@ -10,7 +11,7 @@ class BlueprintButton extends Component {
     const { match, history } = this.props;
 
     return (
-      <IconButton icon={<AttachFile />} 
+      <IconButton icon={<Attachment />} 
                   title="Adicionar Planta" 
                   action={ () => history.push(`/place/${match.params.id}/blueprint`)} />
     )
@@ -18,4 +19,4 @@ class BlueprintButton extends Component {
 
 }
 
-export default withRouter(BlueprintButton)
+export default withBlueprint(withRouter(BlueprintButton));

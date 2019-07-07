@@ -1,123 +1,129 @@
-import { fireStore, fireStorage } from '../../connect/FirebaseConnect';
-import Utils from '../../utils/Utils';
+import { fireStore, fireStorage, fireAuth } from '../../connect/FirebaseConnect';
 import Hash from 'jshashes';
 
+
 export default class PlaceService {
-    
+			
+
 	static getAll = (callback) => {
-		
-			let dataArray = [];
 
+		const user = fireAuth.currentUser;
+		let dataArray = [];
+
+		if (user) {		
 			fireStore.collection('places')
-					.get()
-					.then(query => {
-							query.forEach(doc => {
-									dataArray.push({
-											key: doc.id,
-											data: doc.data()
-									});
-							});
-
-							callback(dataArray);
-					})
-					.catch(err => callback(err))
+				.where('uid', '==', user.uid)
+				.get()
+				.then(query => {					
+					query.forEach(doc => dataArray.push({
+						key: doc.id,
+						data: doc.data()
+					}));
+					callback(dataArray);
+				})
+				.catch(err => console.error(err));
+		} else {
+			throw new Error('401 Unauthorized Request 😸');			
+		}
 	}
 
 	static getById = (id, callback) => {
 
+		const user = fireAuth.currentUser;
+		
+		if (user) {
 			fireStore.collection('places')
-					.doc(id)
-					.get()
-					.then(doc => callback({
-							key: doc.id,
-							data: doc.data()
-					}))
-					.catch(err => callback(err));
+				.doc(id)
+				.get()
+				.then(doc => {
+					callback({
+						key: doc.id,
+						data: doc.data()
+					});
+				})
+				.catch(err => console.error(err));
+			} else {
+				throw new Error('401 Unauthorized Request 😸');			
+			}
 	}
 
 	static create = (data, callback) => {
-		fireStore.collection('places')
-			.add(data)
-			.then(doc => callback(doc.id))
-			.catch(err => callback(err));
+
+		const user = fireAuth.currentUser;
+
+		if (user) {
+
+			fireStore.collection('places')
+				.add({
+					...data,
+					uid: user.uid
+				})
+				.then(doc => {
+					//return doc id for url navigation
+					callback(doc.id)
+				})
+				.catch(err => callback(err));
+		} else {
+			throw new Error('401 Unauthorized Request 😸');
+		}
 	}
     
 	static delete = (id) => {
-		fireStore.collection('places')
-			.doc(id)
-			.delete();
+
+		const user = fireAuth.currentUser;
+
+		if (user) {
+			fireStore.collection('places')
+				.where('uid', '==', user.uid)
+				.doc(id)
+				.delete();
+		} else {
+			throw new Error('401 Unauthorized Request 😸');
+		}
 	}
 
 	static update = (id, data) => {
 
-		const border = (typeof(data.border[0]) === 'object') ? data.border.map(polygon => Utils.mapPolygonToString(polygon)) : data.border;
+		const user = fireAuth.currentUser;
 
-		fireStore.collection('places')
-			.doc(id)
-			.set({
-					...data,
-					border: border,
-				});
+		if (user) {
+			fireStore.collection('places')
+				.doc(id)
+				.set(data);
+		} else {
+			throw new Error('401 Unauthorized Request 😸');
+		}
 	}
  
-	static upload = (place, file, progress, load, error, callback) => {
+	static upload = (folder, file, { progress, load, error } , callback) => {
+
+		const { name, size, type } = file;
 
 		// Hash file name
-		const hashFileName = new Hash.MD5().hex(file.name + (Math.random() * 1000 * file.size));
-		// Set Firebase storage folder
-		const storageLocation = 'blueprint/'
+		const hashedFileName = new Hash.MD5().hex(name + (Math.random() * 1000 * size));
+		
 		// Ref()
 		const storageRef = fireStorage.ref();
 		const metadata = {
-			contentType: file.type,
+			contentType: type,
 		}
-
+		
 		// Start Upload
-		const uploadTask = storageRef.child(storageLocation + hashFileName).put(file, metadata);
+		const uploadTask = storageRef.child(folder + hashedFileName).put(file, metadata);
 
 		// On finished
 		uploadTask.on('state_changed',
 			(snapshot) => progress((snapshot.state === 'running'), snapshot.bytesTransferred, snapshot.totalBytes),
-			(err) => error(err),
+			(err) => console.log('On upload', err),
 			() => {
 				// Get File URL
-				storageRef.child(storageLocation + '/' + hashFileName).getDownloadURL()
+				storageRef.child(folder + hashedFileName).getDownloadURL()
 				.then((url) => {
-					
-					const { id, blueprint } = place;
-					
-					const bl = {
-						url: url,
-						image: hashFileName,
-						border: null,
-						scale: 1,
-						rotation: 0
-					}
-					// Set Blueprint to Place
-					this.update(id, {
-						...place,
-						blueprint: [
-							...blueprint, 
-							bl
-						]	
-					});
-
-					return bl;
-					
-				})
-				.then((blueprint) => {
+					// Callback URL and Hashed FileName to instanciate a new Blueprint
+					callback(url, hashedFileName);
 					load();
-					callback(blueprint);
 				})
-				.catch(err => error(err));
+				.catch(err => console.log('On get URL',err));
 			});
-				
-		
-		// Create a reference to 'mountains.jpg'
-		// var mountainsRef = storageRef.child('mountains.jpg');
-
-		// Create a reference to 'images/mountains.jpg'
-		// var mountainImagesRef = storageRef.child('images/mountains.jpg');
-
 	}
 }

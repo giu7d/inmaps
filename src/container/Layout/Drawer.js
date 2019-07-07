@@ -28,13 +28,15 @@ class Drawer extends Component {
 
   render() {
 
-    const { classes } = this.props;
+    const { classes, user, singOut } = this.props;
+
+    console.log(user);
 
     return (
       <MaterialDrawer anchor="left"
                       variant="permanent">
 
-          <AppBar action={ this._setURLToHome }/>
+          <AppBar user={user} singOut={singOut} action={ this._setURLToHome }/>
 
           <div className={classes.drawer}>
             <Route  path="/" 
@@ -42,7 +44,7 @@ class Drawer extends Component {
                     component={PlaceList} />
             <Route  path="/place/:id" 
                     component={Place} />
-          </div>          
+          </div>     
       </MaterialDrawer>
     )
   }

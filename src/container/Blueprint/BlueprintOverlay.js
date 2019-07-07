@@ -1,12 +1,15 @@
 /* global google */ 
-
 let that = {};
 
 export default function BlueprintOverlay(map, blueprint, markerA, markerB, saveFunc, deleteFunc) {
   
   const {image, url, border, rotation, scale} = blueprint;
 
-  this._bounds = border;
+  this._bounds = new google.maps.LatLngBounds(
+    new google.maps.LatLng(border.south, border.west),
+    new google.maps.LatLng(border.north, border.east)
+  );
+
   this._image = image;
   this._src = url;
   this._map = map;
@@ -45,7 +48,7 @@ BlueprintOverlay.prototype.onAdd = function () {
   
   const panes = this.getPanes();
   panes.overlayMouseTarget.appendChild(div);
-};
+}
 
 BlueprintOverlay.prototype.draw = function () {
 
@@ -58,13 +61,12 @@ BlueprintOverlay.prototype.draw = function () {
   div.style.top = ne.y + 'px';
   div.style.width = (ne.x - sw.x) + 'px';
   div.style.height = (sw.y - ne.y) + 'px';
-};
-
+}
 
 BlueprintOverlay.prototype.updateBounds = function (bounds) {
   this._bounds = bounds;
   this.draw();
-};
+}
 
 BlueprintOverlay.prototype.updateTransform = function (rotation, scale) {
   this._rotation = rotation;
@@ -72,7 +74,7 @@ BlueprintOverlay.prototype.updateTransform = function (rotation, scale) {
   this.onRemove();
   this.onAdd();
   this.draw();
-};
+}
 
 BlueprintOverlay.prototype.updateMarkersVisibility = function (STATE) {
   this.markerA.setVisible(STATE);
@@ -82,28 +84,18 @@ BlueprintOverlay.prototype.updateMarkersVisibility = function (STATE) {
 BlueprintOverlay.prototype.onRemove = function () {
   this._div.parentNode.removeChild(this._div);
   this._div = null;
-};
-
+}
 
 BlueprintOverlay.prototype.getAsBlueprint = function () {
   return {
+    title: `Planta ${this._image.toUpperCase().slice(0, 7)}`,
     image: this._image,
     url: this._src,
-    border: {
-      sw: {
-        latitude: this._bounds.getSouthWest().lat(),
-        longitude: this._bounds.getSouthWest().lng(),
-      },
-      ne: {
-        latitude: this._bounds.getNorthEast().lat(),
-        longitude: this._bounds.getNorthEast().lng(),
-      }
-    },
+    border: this._bounds.toJSON(),
     scale: this._scale,
     rotation: this._rotation
   }
 }
-
 
 BlueprintOverlay.prototype.loadLeastSavedState = function () {
   this.updateBounds(that._bounds);

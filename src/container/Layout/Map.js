@@ -57,15 +57,13 @@ class Map extends Component {
   _changeMapPosition = () => {
 
     const { mapAPI, lat, lng, zoom } = this.props.map;
-
+    
     mapAPI.setCenter({
       lat: lat,
       lng: lng
     });
 
-    if (zoom <= 18) {
-      mapAPI.setZoom(zoom);
-    } 
+    mapAPI.setZoom(zoom);
   }
   
   

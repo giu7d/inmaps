@@ -1,29 +1,25 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux';
 import { IconButton } from '../../presentational';
 import { Timeline } from '@material-ui/icons';
+import { withBorder } from './WithBorder';
+import { PropTypes } from 'prop-types';
 
 
 class BorderButton extends Component {
 
-  _createBorderHandle = () => {
-    this.props.border.createFunc();
-  }
-
   render() {
+
     return (
-      <IconButton icon={<Timeline />} title="Criar Contorno" action={this._createBorderHandle} />
+      <IconButton icon={<Timeline />} 
+                  title="Criar Contorno" 
+                  action={this.props.createBorder} />
     )
   }
 }
 
-// 
-// Redux
-// 
-const mapStateToProps = (state) => {
-  return { ...state };
+BorderButton.propTypes = {
+  createBorder: PropTypes.func.isRequired,
 }
 
-export default connect(
-  mapStateToProps
-)(BorderButton)
+
+export default withBorder(BorderButton);
