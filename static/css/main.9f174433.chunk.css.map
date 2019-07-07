@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.css"],"names":[],"mappings":"AAAA,YACE,YAAa,CACb,eACF,CAEA,UACE,cAAe,CACf,UACF,CAEA,QACE,WAAY,CACZ,iBACF","file":"main.9f174433.chunk.css","sourcesContent":[".FullHeight {\n  height: 100vh;\n  overflow: hidden;\n}\n\n.FloatBtn {\n  position: fixed;\n  float: left;\n}\n\n.Drawer {\n  width: 500px;\n  overflow-x: hidden;\n}"]}

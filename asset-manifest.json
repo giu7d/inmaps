@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/inMaps-Creator/static/css/main.9f174433.chunk.css",
+    "main.js": "/inMaps-Creator/static/js/main.58552e44.chunk.js",
+    "main.js.map": "/inMaps-Creator/static/js/main.58552e44.chunk.js.map",
+    "runtime~main.js": "/inMaps-Creator/static/js/runtime~main.eeb80d12.js",
+    "runtime~main.js.map": "/inMaps-Creator/static/js/runtime~main.eeb80d12.js.map",
+    "static/css/2.35043675.chunk.css": "/inMaps-Creator/static/css/2.35043675.chunk.css",
+    "static/js/2.ffb8c74a.chunk.js": "/inMaps-Creator/static/js/2.ffb8c74a.chunk.js",
+    "static/js/2.ffb8c74a.chunk.js.map": "/inMaps-Creator/static/js/2.ffb8c74a.chunk.js.map",
+    "index.html": "/inMaps-Creator/index.html",
+    "precache-manifest.c9f7f1a4322f7f70f162a020c256249c.js": "/inMaps-Creator/precache-manifest.c9f7f1a4322f7f70f162a020c256249c.js",
+    "service-worker.js": "/inMaps-Creator/service-worker.js",
+    "static/css/2.35043675.chunk.css.map": "/inMaps-Creator/static/css/2.35043675.chunk.css.map",
+    "static/css/main.9f174433.chunk.css.map": "/inMaps-Creator/static/css/main.9f174433.chunk.css.map"
+  }
+}
