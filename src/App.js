@@ -4,6 +4,7 @@ import Map from './container/Layout/Map';
 import withFirebaseAuth from 'react-with-firebase-auth';
 import { providers, fireAuth } from './connect/FirebaseConnect';
 import Login from './container/Layout/Login';
+import { PropTypes } from 'prop-types';
 
 class App extends Component {
   
@@ -25,6 +26,12 @@ class App extends Component {
       </main>
     );
   }
+}
+
+App.propTypes = {
+  // user: PropTypes.object.isRequired,
+  singOut: PropTypes.func.isRequired,
+  signInWithGoogle: PropTypes.func.isRequired,
 }
 
 

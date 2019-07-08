@@ -46,7 +46,14 @@
     ]
   },
   "devDependencies": {
+    "@wapps/jest-google-maps-mock": "0.0.9",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
+    "enzyme-to-json": "^3.3.5",
     "eslint-plugin-react-hooks": "^1.6.0",
+    "googlemaps-js-api-stub": "^0.1.0",
+    "jsdom": "^15.1.1",
+    "jsdom-global": "^3.0.2",
     "redux-devtools": "^3.5.0"
   }
 }

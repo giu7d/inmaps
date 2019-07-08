@@ -3,9 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from '../../store/Actions';
-
 import { withStyles } from '@material-ui/core';
-
 
 const styles = {
   map: {

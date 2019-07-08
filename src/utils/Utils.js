@@ -1,5 +1,4 @@
 /* global google */
-
 export default class Utils {
 
   // Misc

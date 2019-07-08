@@ -74,7 +74,6 @@ export default class PlaceService {
 
 		if (user) {
 			fireStore.collection('places')
-				.where('uid', '==', user.uid)
 				.doc(id)
 				.delete();
 		} else {

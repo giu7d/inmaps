@@ -1,4 +1,4 @@
-/* global google */ 
+/* global google */
 let that = {};
 
 export default function BlueprintOverlay(map, blueprint, markerA, markerB, saveFunc, deleteFunc) {

@@ -1,7 +1,5 @@
 /* global google */
-
 import Utils from '../../utils/Utils';
-
 
 // 
 // O Border polygon fornece todas as ferramentas para criação de um poligono!!
