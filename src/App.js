@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Drawer from './container/Layout/Drawer';
 import Map from './container/Layout/Map';
+import Drawer from './container/Layout/Drawer';
 import withFirebaseAuth from 'react-with-firebase-auth';
 import { providers, fireAuth } from './connect/FirebaseConnect';
 import Login from './container/Layout/Login';
@@ -29,7 +29,6 @@ class App extends Component {
 }
 
 App.propTypes = {
-  // user: PropTypes.object.isRequired,
   singOut: PropTypes.func.isRequired,
   signInWithGoogle: PropTypes.func.isRequired,
 }

@@ -9,6 +9,7 @@
 /coverage
 .scannerwork
 sonar-project.properties
+__snapshots__
 
 # production
 /build
@@ -26,4 +27,3 @@ yarn-debug.log*
 yarn-error.log*
 
 .firebase
-Roadmap-React-Test.md
